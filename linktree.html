@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linktree - TBC8's website</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script>
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.iframeHeight) {
+                document.getElementById('header-frame').style.height = e.data.iframeHeight + 'px';
+            }
+        });
+    </script>
+    <div class="floating-cards"></div>
+    <iframe id="header-frame" src="header.html" scrolling="no"></iframe>
+    <div class="container-single">
+        <main>
+            <h1>Where You Can Find Me</h1>
+            <h4>Links</h4>
+            <ul class="links-list">
+                <li>
+                    <a href="https://spacehey.com/tbc" target="_blank">
+                        My SpaceHey
+                        <span>It's like MySpace but more emo.</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.youtube.com/@TheBigCoom8" target="_blank">
+                        My YouTube
+                        <span>I don't post on there but it exists.</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/thebigcoom8" target="_blank">
+                        My Github
+                        <span>I have the code for this there — check it out if you want to make a website but don't know what you're doing.</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="mailto:TheBigCoom8@gmail.com" target="_blank">
+                        My Email
+                        <span>TheBigCoom8@gmail.com</span>
+                    </a>
+                </li>
+            </ul>
+        </main>
+    </div>
+</body>
+</html>

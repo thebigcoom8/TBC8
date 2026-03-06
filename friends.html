@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>friends Websites - TBC8's website</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script>
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.iframeHeight) {
+                document.getElementById('header-frame').style.height = e.data.iframeHeight + 'px';
+            }
+        });
+    </script>
+
+    <div class="floating-cards"></div>
+    <iframe id="header-frame" src="header.html" scrolling="no"></iframe>
+
+    <div class="container-single">
+        <main>
+            <h1>My IRL friends websites</h1>
+            <h4>Links</h4>
+            <ul class="links-list">
+                <li>
+                    <a href="https://oliveepicsauce.neocities.org/" target="_blank">
+                        oliveepicsauce
+                        <span>Its olive she epicsauce</span>
+                    </a>
+                </li>
+                <li>
+                  <a href="https://xxvilovesmcrxx.neocities.org/" target="_blank">
+                    violet's page
+                    <span>"its supper cool and not lesbian"- violet the onwer os the site</span>
+            </ul>
+        </main>
+    </div>
+
+</body>
+</html>

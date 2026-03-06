@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Backup — Gambit's Website</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        :root {
+            --purple: #a855f7;
+            --purple-dark: #7c3aed;
+            --purple-deeper: #5b21b6;
+            --text: #e9d5ff;
+            --border-dim: rgba(168,85,247,0.3);
+            --success: #00ff88;
+            --error: #ff6060;
+        }
+        #header-frame {
+            width: 100%;
+            border: none;
+            display: block;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 60px;
+        }
+        .page-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 620px;
+            width: 100%;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+        .header .tag {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: var(--purple);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(24px, 5vw, 38px);
+            font-weight: 900;
+            color: var(--purple);
+            text-shadow: 0 0 20px var(--purple-dark), 0 0 40px var(--purple-deeper);
+            letter-spacing: 3px;
+        }
+        .header p {
+            margin-top: 8px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: rgba(168,85,247,0.5);
+            letter-spacing: 2px;
+        }
+
+        .key-panel {
+            background: rgba(26,0,51,0.95);
+            border: 2px solid var(--purple);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 30px var(--purple-dark), inset 0 0 20px rgba(124,58,237,0.15);
+            margin-bottom: 20px;
+        }
+        .key-panel-title {
+            background: linear-gradient(135deg, var(--purple-dark), var(--purple-deeper));
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #fff;
+            padding: 13px 20px;
+        }
+        .key-panel-body {
+            padding: 16px 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .key-input {
+            flex: 1;
+            background: rgba(26,0,51,0.8);
+            border: 1px solid var(--border-dim);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .key-input:focus { border-color: var(--purple); box-shadow: 0 0 10px rgba(168,85,247,0.3); }
+        .key-input::placeholder { color: rgba(168,85,247,0.35); }
+        .key-note {
+            padding: 0 20px 14px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            color: rgba(168,85,247,0.4);
+            letter-spacing: 1px;
+        }
+
+        .panel {
+            background: rgba(26,0,51,0.95);
+            border: 2px solid var(--purple);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 30px var(--purple-dark), inset 0 0 20px rgba(124,58,237,0.15);
+        }
+        .panel-title {
+            background: linear-gradient(135deg, var(--purple-dark), var(--purple-deeper));
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #fff;
+            padding: 13px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .file-count {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 1px;
+        }
+        .file-list {
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 360px;
+            overflow-y: auto;
+            min-height: 80px;
+        }
+        .file-list::-webkit-scrollbar { width: 5px; }
+        .file-list::-webkit-scrollbar-track { background: transparent; }
+        .file-list::-webkit-scrollbar-thumb { background: var(--border-dim); border-radius: 3px; }
+
+        .file-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 14px;
+            background: rgba(168,85,247,0.05);
+            border: 1px solid var(--border-dim);
+            border-radius: 8px;
+            transition: border-color 0.2s;
+        }
+        .file-row.done   { border-color: rgba(0,255,136,0.4); background: rgba(0,255,136,0.05); }
+        .file-row.error  { border-color: rgba(255,96,96,0.4); background: rgba(255,96,96,0.05); }
+        .file-row.active { border-color: var(--purple); background: rgba(168,85,247,0.1); }
+        .file-icon {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            color: rgba(168,85,247,0.5);
+            min-width: 36px;
+            text-align: center;
+        }
+        .file-name {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            color: var(--text);
+            flex: 1;
+            word-break: break-all;
+        }
+        .file-status {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1px;
+            min-width: 120px;
+            text-align: right;
+        }
+        .file-row.done   .file-status { color: var(--success); }
+        .file-row.error  .file-status { color: var(--error); }
+        .file-row.active .file-status { color: var(--purple); }
+        .file-row:not(.done):not(.error):not(.active) .file-status { color: rgba(168,85,247,0.35); }
+
+        .dot-spin { display: inline-block; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .panel-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-dim);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .progress-wrap { flex: 1; min-width: 140px; }
+        .progress-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            color: rgba(168,85,247,0.5);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            height: 4px;
+            background: rgba(168,85,247,0.15);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--purple-dark), var(--purple));
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px var(--purple);
+        }
+        .btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 11px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--purple-dark), var(--purple-deeper));
+            color: #fff;
+            border: 1px solid var(--purple);
+            box-shadow: 0 0 20px var(--purple-dark);
+        }
+        .btn-primary:hover:not(:disabled) { box-shadow: 0 0 30px var(--purple); transform: scale(1.02); }
+        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .btn-success {
+            background: linear-gradient(135deg, #14532d, #166534);
+            color: var(--success);
+            border: 1px solid var(--success);
+            box-shadow: 0 0 15px rgba(0,255,136,0.3);
+        }
+        .btn-success:hover { box-shadow: 0 0 25px rgba(0,255,136,0.5); transform: scale(1.02); }
+
+        .summary {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: rgba(0,255,136,0.06);
+            border: 1px solid rgba(0,255,136,0.25);
+            border-radius: 10px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: var(--success);
+            letter-spacing: 1px;
+            display: none;
+            text-align: center;
+        }
+        .summary.visible { display: block; }
+        .summary.error-summary {
+            background: rgba(255,96,96,0.06);
+            border-color: rgba(255,96,96,0.25);
+            color: var(--error);
+        }
+    </style>
+</head>
+<body>
+<script>
+    window.addEventListener('message', function(e) {
+        if (e.data && e.data.iframeHeight) {
+            document.getElementById('header-frame').style.height = e.data.iframeHeight + 'px';
+        }
+    });
+</script>
+<iframe id="header-frame" src="head.htm" scrolling="no"></iframe>
+<div class="floating-cards"></div>
+
+<div class="page-content">
+    <div class="wrap">
+        <div class="header">
+            <div class="tag">// backup_tool v2.1 — hard-coded</div>
+            <h1>SITE BACKUP</h1>
+            <p>23 files · bundles into zip · one click</p>
+        </div>
+
+
+
+        <div class="panel">
+            <div class="panel-title">
+                <span>⬡ Files</span>
+                <span class="file-count" id="file-count">23 files</span>
+            </div>
+            <div class="file-list" id="file-list"></div>
+            <div class="panel-footer">
+                <div class="progress-wrap">
+                    <div class="progress-label" id="progress-label">ready</div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
+                </div>
+                <button class="btn btn-primary" id="dl-btn" onclick="startBackup()">⬇ Download ZIP</button>
+            </div>
+        </div>
+
+        <div class="summary" id="summary"></div>
+    </div>
+</div>
+
+<script>
+const FILES = [
+    'ae86.jpg',
+    'backup.html',
+    'blogpostpage.html',
+    'CoolWebsites.html',
+    'favicon.ico',
+    'friends.html',
+    'Gambit.html',
+    'Games.html',
+    'header.htm',
+    'icon-192.png',
+    'icon-512.png',
+    'index.html',
+    'linktree.html',
+    'manifest.json',
+    'neocities.png',
+    'new-thing.html',
+    'NewPageTemplate.html',
+    'not_found.html',
+    'postforge.html',
+    'robots.txt',
+    'style.css',
+    'sw.js',
+    'the-first-blog.html'
+];
+
+const rows = {};
+
+// Render the file list on page load
+(function renderFileList() {
+    const list = document.getElementById('file-list');
+    list.innerHTML = '';
+    FILES.forEach(f => {
+        const ext = f.split('.').pop().toUpperCase();
+        const rowId = 'row-' + f.replace(/[^a-z0-9]/gi, '_');
+        const row = document.createElement('div');
+        row.className = 'file-row';
+        row.id = rowId;
+        row.innerHTML = `
+            <span class="file-icon">.${ext}</span>
+            <span class="file-name">${f}</span>
+            <span class="file-status" id="status-${rowId}">waiting</span>
+        `;
+        list.appendChild(row);
+        rows[f] = { row, rowId };
+    });
+})();
+
+function setStatus(file, state, label) {
+    const { row, rowId } = rows[file];
+    if (!row) return;
+    row.className = 'file-row ' + state;
+    document.getElementById('status-' + rowId).innerHTML = state === 'active'
+        ? `<span class="dot-spin">⟳</span> ${label}`
+        : label;
+}
+
+async function startBackup() {
+    const SITE_NAME = 'thebigcoom';
+
+    const btn = document.getElementById('dl-btn');
+    btn.disabled = true;
+
+    const zip = new JSZip();
+    let done = 0, failed = [];
+
+    for (const file of FILES) {
+        setStatus(file, 'active', 'fetching');
+        updateProgress(done, FILES.length, `fetching ${file}`);
+        try {
+            const res = await fetch(`/${file}`, {
+                mode: 'cors',
+                credentials: 'omit'
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const blob = await res.blob();
+            zip.file(file, blob);
+            setStatus(file, 'done', '✓ ok');
+        } catch (e) {
+            setStatus(file, 'error', `✗ ${e.message}`);
+            failed.push(file);
+            console.error(file, e);
+        }
+        done++;
+        updateProgress(done, FILES.length, done === FILES.length ? 'packing zip...' : 'fetching...');
+    }
+
+    updateProgress(FILES.length, FILES.length, 'generating zip...');
+    const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `${SITE_NAME}-backup.zip`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    updateProgress(FILES.length, FILES.length, 'done!');
+
+    const summary = document.getElementById('summary');
+    if (failed.length) {
+        summary.className = 'summary visible error-summary';
+        summary.textContent = `✓ downloaded ${FILES.length - failed.length} files · ✗ skipped: ${failed.join(', ')}`;
+    } else {
+        summary.className = 'summary visible';
+        summary.textContent = `✓ all ${FILES.length} files downloaded successfully`;
+    }
+
+    btn.className = 'btn btn-success';
+    btn.textContent = '✓ Saved!';
+    btn.disabled = false;
+    btn.onclick = () => location.reload();
+}
+
+function updateProgress(done, total, label) {
+    document.getElementById('progress-label').textContent = label;
+    document.getElementById('progress-bar').style.width = total ? Math.round((done / total) * 100) + '%' : '0%';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,399 @@
+/*=============================================
+   FONTS
+==============================================*/
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap');
+
+/*=============================================
+   RESET
+==============================================*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/*=============================================
+   BODY
+==============================================*/
+body {
+    background-color: #0d0b1e;
+    background-image:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(120, 80, 200, 0.45) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(200, 100, 160, 0.25) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 30% at 10% 90%, rgba(80, 120, 220, 0.2) 0%, transparent 50%),
+        url('ae86.jpg'); /* ← replace with your actual filename */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 16px;
+    color: #e2d9f3;
+    min-height: 100vh;
+}
+
+.container-single {
+    max-width: 1400px;
+    width: 95%;
+    margin: 30px auto;
+}
+
+/*=============================================
+   HEADER IFRAME
+==============================================*/
+#header-frame {
+    width: 100%;
+    height: 58px;
+    border: none;
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: height 0.2s ease;
+}
+
+/*=============================================
+   MAIN CONTAINER
+==============================================*/
+.container {
+    max-width: 1400px;
+    width: 95%;
+    margin: 30px auto;
+    display: flex;
+    gap: 30px;
+}
+
+.col-left {
+    width: 35%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.col-right {
+    width: 63%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/*=============================================
+   CONTENT BOXES
+==============================================*/
+main, .profile-section {
+    background: linear-gradient(
+        135deg,
+        rgba(25, 18, 55, 0.45) 0%,
+        rgba(20, 12, 45, 0.52) 100%
+    );
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    padding: 24px;
+    border: 1px solid rgba(180, 140, 255, 0.22);
+    border-radius: 18px;
+    box-shadow:
+        0 0 40px rgba(130, 80, 220, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 8px 32px rgba(0, 0, 0, 0.75);
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: fadeInUp 0.9s ease-out forwards;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Soft shimmer line at top of each card */
+main::before, .profile-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200, 160, 255, 0.5), rgba(240, 168, 200, 0.4), transparent);
+    border-radius: 50%;
+}
+
+main:hover, .profile-section:hover {
+    border-color: rgba(200, 160, 255, 0.38);
+    box-shadow:
+        0 0 60px rgba(160, 100, 240, 0.2),
+        0 0 120px rgba(200, 100, 160, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+        0 12px 48px rgba(0, 0, 0, 0.55);
+    transform: translateY(-2px);
+}
+
+/*=============================================
+   HEADINGS
+==============================================*/
+h1 {
+    font-size: 58px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+    animation: softGlow 4s ease-in-out infinite alternate, fadeInUp 0.9s ease-out backwards;
+    background: linear-gradient(135deg, #c9b8ff 0%, #f0a8c8 50%, #ffe4a0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+h2, .section-heading {
+    background: linear-gradient(
+        135deg,
+        rgba(90, 50, 160, 0.7) 0%,
+        rgba(140, 70, 120, 0.6) 100%
+    );
+    backdrop-filter: blur(8px);
+    font-family: 'Orbitron', sans-serif;
+    color: #e8d8ff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(200, 160, 255, 0.5);
+    border-bottom: 1px solid rgba(200, 160, 255, 0.2);
+    border-radius: 14px 14px 0 0;
+    padding: 14px 18px;
+    margin: -24px -24px 18px -24px;
+}
+
+h4 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #c9b8ff;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin: 18px 0 10px 0;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(200, 160, 255, 0.15);
+}
+
+p {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.75;
+    margin-bottom: 10px;
+    color: #d4c8ef;
+    letter-spacing: 0.3px;
+}
+
+em {
+    font-style: italic;
+    color: #f0c8df;
+    font-weight: 400;
+}
+
+/*=============================================
+   LINKS
+==============================================*/
+a {
+    color: #c9b8ff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: #f0c8df;
+    text-shadow: 0 0 12px rgba(240, 168, 200, 0.6);
+}
+
+/*=============================================
+   DETAILS TABLE
+==============================================*/
+.details-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.details-table td {
+    background: rgba(160, 120, 220, 0.07);
+    color: #d4c8ef;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(160, 120, 220, 0.12);
+    font-size: 14px;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+    transition: background 0.2s;
+}
+
+.details-table tr:hover td {
+    background: rgba(200, 160, 255, 0.1);
+}
+
+.details-table td:first-child {
+    background: rgba(130, 80, 200, 0.15);
+    color: #e8d8ff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    width: 38%;
+}
+
+/*=============================================
+   LINKS LIST
+==============================================*/
+.links-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.links-list li {
+    background: linear-gradient(
+        135deg,
+        rgba(80, 45, 150, 0.45) 0%,
+        rgba(120, 55, 100, 0.35) 100%
+    );
+    border: 1px solid rgba(180, 140, 255, 0.18);
+    border-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+}
+
+.links-list li::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(200, 160, 255, 0.08), rgba(240, 168, 200, 0.06));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    border-radius: 12px;
+    pointer-events: none; /* FIX: prevents overlay from blocking link clicks */
+}
+
+.links-list li:hover::before { opacity: 1; }
+
+.links-list li:hover {
+    border-color: rgba(220, 180, 255, 0.38);
+    box-shadow: 0 0 20px rgba(160, 100, 240, 0.2), 0 4px 20px rgba(0, 0, 0, 0.35);
+    transform: translateX(4px);
+}
+
+.links-list li a {
+    display: block;
+    padding: 12px 16px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #d4c4ff;
+    text-shadow: 0 0 8px rgba(180, 140, 255, 0.3);
+}
+
+.links-list li:hover a {
+    color: #f0d4ff;
+    text-shadow: 0 0 14px rgba(220, 180, 255, 0.5);
+}
+
+.links-list li a span {
+    display: block;
+    margin-top: 4px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.3px;
+    text-transform: none;
+    color: #b8a8d8;
+    text-shadow: none;
+}
+
+.links-list li:hover a span {
+    color: #d4c0f0;
+}
+
+/*=============================================
+   ANIMATIONS
+==============================================*/
+@keyframes softGlow {
+    from { filter: drop-shadow(0 0 8px rgba(150, 80, 220, 0.4)); }
+    to   { filter: drop-shadow(0 0 20px rgba(200, 120, 200, 0.6)) drop-shadow(0 0 40px rgba(120, 80, 200, 0.3)); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes drift {
+    0%   { transform: translate(0, 0) rotate(0deg);    opacity: 0.12; }
+    33%  { transform: translate(8px, -12px) rotate(5deg);   opacity: 0.2; }
+    66%  { transform: translate(-5px, -8px) rotate(-3deg);  opacity: 0.15; }
+    100% { transform: translate(0, 0) rotate(0deg);    opacity: 0.12; }
+}
+
+/*=============================================
+   AMBIENT FLOATING ELEMENTS
+==============================================*/
+.floating-cards {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.floating-cards::before {
+    content: "✦";
+    position: fixed;
+    top: 18%;
+    left: 8%;
+    font-size: 28px;
+    color: #c9b8ff;
+    opacity: 0.15;
+    animation: drift 9s ease-in-out infinite;
+    filter: blur(0.5px);
+}
+
+.floating-cards::after {
+    content: "✧";
+    position: fixed;
+    top: 65%;
+    right: 7%;
+    font-size: 22px;
+    color: #f0a8c8;
+    opacity: 0.15;
+    animation: drift 12s ease-in-out infinite 3s;
+    filter: blur(0.5px);
+}
+
+/*=============================================
+   CUSTOM SCROLLBAR
+==============================================*/
+::-webkit-scrollbar { width: 6px; }
+
+::-webkit-scrollbar-track { background: #0d0b1e; }
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(150, 100, 220, 0.5) 0%, rgba(180, 100, 150, 0.5) 100%);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(180, 140, 255, 0.7) 0%, rgba(220, 140, 180, 0.7) 100%);
+}
+
+/*=============================================
+   RESPONSIVE
+==============================================*/
+@media (max-width: 1024px) {
+    .container {
+        flex-direction: column;
+        padding: 0 15px;
+    }
+    .col-left, .col-right { width: 100%; }
+}
+
+@media (max-width: 600px) {
+    h1 { font-size: 30px; letter-spacing: 1px; }
+}

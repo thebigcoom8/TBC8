@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games - TBC8's website</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <script>
+   window.addEventListener('message', function(e) {
+      if (e.data && e.data.iframeHeight) {
+        document.getElementById('header-frame').style.height = e.data.iframeHeight + 'px';
+      }
+    });
+</script>
+    <div class="floating-cards"></div>
+    <iframe id="header-frame" src="header.html" scrolling="no"></iframe>
+    <div class="container-single">
+        <main>
+            <h1>Games I found and think are fun</h1>
+            <h4>Links</h4>
+            <ul class="links-list">
+                <li>
+                    <a href="https://drift-hunters.co/drift-hunters-games#google_vignette" target="_blank">
+                        Drift Hunters<br>
+                        <span>A simple game where you start with the AE86 — the car that made drifting famous. You earn money by drifting, then spend it buying new cars.</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://yukitarogames.github.io/evercraft-idle/" target="_blank">
+                        Evercraft Idle<br>
+                        <span>Honestly hard to explain — it's some sort of gem crafting idle game and it gets pretty confusing pretty fast.</span>
+                    </a>
+                </li>
+            </ul>
+        </main>
+    </div>
+</body>
+</html>

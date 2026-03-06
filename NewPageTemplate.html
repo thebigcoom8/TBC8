@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAGE TITLE - TBC8's website</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Keeps the header iframe height in sync -->
+    <script>
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.iframeHeight) {
+                document.getElementById('header-frame').style.height = e.data.iframeHeight + 'px';
+            }
+        });
+    </script>
+
+    <!-- Background decorative cards (styled via CSS) -->
+    <div class="floating-cards"></div>
+
+    <!-- Shared site header -->
+    <iframe id="header-frame" src="header.html" scrolling="no"></iframe>
+
+    <!-- Main content wrapper -->
+    <div class="container-single">
+        <main>
+
+            <!-- ================================ -->
+            <!--  EDIT YOUR PAGE CONTENT BELOW   -->
+            <!-- ================================ -->
+
+            <h1>Page Title Here</h1>
+            <h4>Section Subtitle</h4>
+
+            <!-- Example: a list of links (like the friends page) -->
+            <ul class="links-list">
+                <li>
+                    <a href="https://example.com" target="_blank">
+                        Link Name
+                        <span>Short description of the link</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://example.com" target="_blank">
+                        Another Link
+                        <span>Another description</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Example: plain text paragraph -->
+            <p>You can also just write regular text here like this.</p>
+
+            <!-- ================================ -->
+            <!--  END OF EDITABLE CONTENT        -->
+            <!-- ================================ -->
+
+        </main>
+    </div>
+
+    <!--
+    ================================
+    TIPS
+    ================================
+    - Change <title> to match your page name
+    - Replace the <h1> and <h4> with your own headings
+    - Add/remove <li> items in the links list as needed
+    - To add a plain section instead of a list, just use <p> tags
+    - Keep header.html and style.css in the same folder as this file
+    ================================
+    -->
+
+</body>
+</html>

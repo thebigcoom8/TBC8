@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Forge - TBC8's Website</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+    <style>
+        :root {
+            --purple: #a855f7;
+            --purple-dark: #7c3aed;
+            --purple-deeper: #5b21b6;
+            --bg: #1a0033;
+            --text: #e9d5ff;
+            --border-dim: rgba(168,85,247,0.3);
+            --success: #00ff88;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #0d001a; color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 16px; min-height: 100vh; overflow-x: hidden; }
+        #header-frame { width: 100%; border: none; display: block; position: sticky; top: 0; z-index: 100; height: 60px; }
+        .floating-cards { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+        body::before { content: ''; position: fixed; inset: 0; background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(124,58,237,0.03) 10px, rgba(124,58,237,0.03) 20px); pointer-events: none; z-index: 0; }
+        .portal-wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+        .portal-header { text-align: center; margin-bottom: 48px; }
+        .portal-header .tag-line { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px; opacity: 0.8; }
+        .portal-header h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(28px,5vw,48px); font-weight: 900; color: var(--purple); text-shadow: 0 0 20px var(--purple-dark), 0 0 40px var(--purple-deeper); letter-spacing: 3px; line-height: 1.1; }
+        .portal-header .subtitle { margin-top: 10px; font-size: 14px; color: rgba(168,85,247,0.6); font-family: 'Share Tech Mono', monospace; letter-spacing: 2px; }
+
+        .steps { display: flex; align-items: center; margin-bottom: 36px; justify-content: center; }
+        .step { display: flex; align-items: center; gap: 10px; padding: 8px 16px; font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; color: rgba(168,85,247,0.4); letter-spacing: 1px; transition: color 0.3s; }
+        .step.active { color: var(--purple); }
+        .step.done { color: var(--success); }
+        .step-num { width: 26px; height: 26px; border-radius: 50%; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; transition: all 0.3s; }
+        .step.active .step-num { background: var(--purple); color: var(--bg); box-shadow: 0 0 12px var(--purple); }
+        .step.done .step-num { background: var(--success); color: #000; }
+        .step-connector { flex: 1; max-width: 60px; height: 1px; background: var(--border-dim); }
+
+        .panel { background: rgba(26,0,51,0.95); border: 2px solid var(--purple); border-radius: 15px; padding: 20px; margin-bottom: 24px; position: relative; box-shadow: 0 0 20px var(--purple-dark), inset 0 0 20px rgba(124,58,237,0.2); transition: all 0.3s; }
+        .panel:focus-within { box-shadow: 0 0 30px var(--purple), inset 0 0 30px rgba(168,85,247,0.3); }
+        .panel-title { background: linear-gradient(135deg, var(--purple-dark) 0%, var(--purple-deeper) 100%); font-family: 'Orbitron', sans-serif; color: #fff; font-size: 13px; font-weight: 900; letter-spacing: 2px; padding: 12px 20px; margin: -20px -20px 20px -20px; border-radius: 12px 12px 0 0; display: flex; align-items: center; gap: 8px; }
+
+        label { display: block; font-family: 'Share Tech Mono', monospace; font-size: 11px; color: rgba(168,85,247,0.7); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+        input[type="text"], input[type="date"], select, textarea { width: 100%; background: rgba(26,0,51,0.8); border: 1px solid var(--border-dim); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; }
+        input:focus, select:focus, textarea:focus { border-color: var(--purple); box-shadow: 0 0 10px rgba(168,85,247,0.3); }
+        input::placeholder, textarea::placeholder { color: rgba(168,85,247,0.35); }
+        select option { background: #1a0033; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+        .editor-toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 10px; background: rgba(124,58,237,0.1); border: 1px solid var(--border-dim); border-bottom: none; border-radius: 8px 8px 0 0; }
+        .toolbar-btn { background: transparent; border: 1px solid transparent; border-radius: 6px; color: rgba(168,85,247,0.6); cursor: pointer; font-family: 'Share Tech Mono', monospace; font-size: 12px; padding: 4px 10px; transition: all 0.15s; }
+        .toolbar-btn:hover { background: rgba(168,85,247,0.15); border-color: var(--border-dim); color: var(--purple); }
+        .toolbar-sep { width: 1px; background: var(--border-dim); margin: 4px 2px; align-self: stretch; }
+        #blog-content { border-top: none; border-radius: 0 0 8px 8px; min-height: 320px; resize: vertical; line-height: 1.7; font-size: 13px; font-family: 'Share Tech Mono', monospace; }
+
+        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 12px; background: rgba(26,0,51,0.8); border: 1px solid var(--border-dim); border-radius: 8px; cursor: text; min-height: 48px; align-items: center; transition: border-color 0.2s; }
+        .tags-container:focus-within { border-color: var(--purple); box-shadow: 0 0 10px rgba(168,85,247,0.3); }
+        .tag-chip { background: linear-gradient(135deg, var(--purple-dark), var(--purple-deeper)); border: 1px solid var(--purple); border-radius: 6px; color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 11px; padding: 3px 10px; display: flex; align-items: center; gap: 6px; }
+        .tag-chip button { background: none; border: none; cursor: pointer; color: #fff; opacity: 0.6; padding: 0; font-size: 14px; line-height: 1; }
+        .tag-chip button:hover { opacity: 1; }
+        #tag-input { background: none; border: none; outline: none; color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 13px; min-width: 80px; flex: 1; }
+        .char-counter { text-align: right; font-family: 'Share Tech Mono', monospace; font-size: 11px; color: rgba(168,85,247,0.5); margin-top: 6px; }
+
+        .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; margin-top: 8px; }
+        .btn { font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 12px 28px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, var(--purple-dark), var(--purple-deeper)); color: #fff; box-shadow: 0 0 20px var(--purple-dark); border: 1px solid var(--purple); }
+        .btn-primary:hover { box-shadow: 0 0 30px var(--purple); transform: scale(1.02); }
+        .btn-secondary { background: transparent; color: var(--purple); border: 1px solid var(--purple); }
+        .btn-secondary:hover { background: rgba(168,85,247,0.1); box-shadow: 0 0 15px rgba(168,85,247,0.3); }
+        .btn-accent { background: linear-gradient(135deg, #7c3aed, #5b21b6); color: #fff; border: 1px solid var(--purple); box-shadow: 0 0 15px var(--purple-dark); }
+        .btn-accent:hover { box-shadow: 0 0 25px var(--purple); transform: scale(1.02); }
+
+        #output-section { display: none; }
+        #output-section.visible { display: block; }
+        #card-section { display: none; }
+        #card-section.visible { display: block; }
+
+        .output-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 12px; }
+        .output-toolbar-title { font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--success); text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        .dot-blink { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); animation: blink 1.2s ease-in-out infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+        .code-box { background: #08001a; border-radius: 10px; padding: 20px; font-family: 'Share Tech Mono', monospace; font-size: 12.5px; line-height: 1.6; overflow-x: auto; white-space: pre-wrap; word-break: break-word; max-height: 500px; overflow-y: auto; }
+        .code-box::-webkit-scrollbar { width: 6px; } .code-box::-webkit-scrollbar-track { background: #08001a; } .code-box::-webkit-scrollbar-thumb { background: var(--border-dim); border-radius: 3px; }
+        #html-output { border: 1px solid rgba(0,255,136,0.2); color: #a78bfa; }
+        #card-output { border: 1px solid rgba(168,85,247,0.25); color: #c084fc; }
+
+        .view-toggle { display: flex; background: rgba(26,0,51,0.8); border: 1px solid var(--border-dim); border-radius: 8px; overflow: hidden; }
+        .toggle-btn { background: transparent; border: none; color: rgba(168,85,247,0.5); cursor: pointer; font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 1px; padding: 6px 14px; transition: all 0.15s; }
+        .toggle-btn.active { background: rgba(168,85,247,0.15); color: var(--purple); }
+        .toggle-btn + .toggle-btn { border-left: 1px solid var(--border-dim); }
+        #preview-frame { width: 100%; border: 2px solid var(--purple); border-radius: 10px; background: #1a0033; min-height: 300px; display: none; box-shadow: 0 0 20px var(--purple-dark); }
+        #preview-frame.visible { display: block; }
+        .hint { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: rgba(168,85,247,0.5); margin-bottom: 10px; letter-spacing: 1px; }
+        .hint code { color: #c084fc; }
+
+        /* Collapsible info box */
+        .info-box { border: 1px solid var(--border-dim); border-radius: 10px; margin-bottom: 28px; overflow: hidden; }
+        .info-toggle { width: 100%; background: rgba(124,58,237,0.12); border: none; color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; padding: 13px 18px; text-transform: uppercase; transition: background 0.2s; }
+        .info-toggle:hover { background: rgba(124,58,237,0.22); }
+        .info-toggle span:first-child { color: var(--purple); }
+        .info-arrow { color: rgba(168,85,247,0.5); font-size: 10px; transition: transform 0.3s ease; }
+        .info-arrow.open { transform: rotate(180deg); }
+        .info-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+        .info-body.open { max-height: 1400px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid var(--border-dim); }
+        @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } }
+        .info-step { display: flex; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--border-dim); border-right: 1px solid var(--border-dim); }
+        .info-step:nth-child(even) { border-right: none; }
+        .info-step:nth-last-child(-n+2) { border-bottom: none; }
+        .info-num { background: linear-gradient(135deg, var(--purple-dark), var(--purple-deeper)); border-radius: 50%; color: #fff; flex-shrink: 0; font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; height: 26px; width: 26px; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+        .info-step strong { font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700; color: #c084fc; letter-spacing: 1px; display: block; margin-bottom: 5px; text-transform: uppercase; }
+        .info-step p { font-size: 12px; line-height: 1.5; color: rgba(233,213,255,0.65); margin: 0; }
+        .info-step code { color: #c084fc; font-family: 'Share Tech Mono', monospace; font-size: 11px; }
+
+        /* Dependencies section */
+        .info-deps { border-top: 1px solid var(--border-dim); padding: 20px 18px; }
+        .info-deps-title { font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; color: #f59e0b; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+        .info-deps-desc { font-size: 12px; color: rgba(233,213,255,0.6); line-height: 1.5; margin-bottom: 14px; }
+        .info-deps-desc code { color: #c084fc; font-family: 'Share Tech Mono', monospace; font-size: 11px; }
+        .deps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+        @media (max-width: 600px) { .deps-grid { grid-template-columns: 1fr; } }
+        .deps-group-label { font-family: 'Orbitron', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--purple); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border-dim); }
+        .dep-row { display: flex; align-items: baseline; gap: 8px; padding: 4px 0; border-bottom: 1px solid rgba(168,85,247,0.08); }
+        .dep-row:last-child { border-bottom: none; }
+        .dep-row code { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: #c084fc; flex-shrink: 0; min-width: 110px; }
+        .dep-row span { font-size: 11px; color: rgba(233,213,255,0.5); line-height: 1.4; }
+        .info-deps-note { font-size: 11px; color: rgba(233,213,255,0.45); line-height: 1.5; border-top: 1px solid var(--border-dim); padding-top: 12px; margin-top: 4px; }
+        .info-deps-note code { color: #c084fc; font-family: 'Share Tech Mono', monospace; font-size: 10px; }
+
+        /* Upload panel */
+        .upload-drop { border: 2px dashed var(--border-dim); border-radius: 10px; padding: 28px 20px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .upload-drop:hover { border-color: var(--purple); background: rgba(168,85,247,0.05); }
+        .upload-drop.dragover { border-color: var(--purple); background: rgba(168,85,247,0.1); box-shadow: 0 0 20px rgba(168,85,247,0.2); }
+        .upload-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.5; }
+        .upload-label { font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--purple); margin-bottom: 4px; }
+        .upload-sub { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: rgba(168,85,247,0.45); }
+        .upload-status { margin-top: 12px; font-family: 'Share Tech Mono', monospace; font-size: 12px; padding: 10px 14px; border-radius: 8px; }
+        .upload-status.ok { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.25); color: var(--success); }
+        .upload-status.err { background: rgba(255,80,80,0.08); border: 1px solid rgba(255,80,80,0.25); color: #ff6060; }
+
+        /* Mode badge */
+        .mode-badge { display: inline-block; font-family: 'Share Tech Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 4px; letter-spacing: 1px; margin-left: 8px; vertical-align: middle; }
+        .mode-badge.markdown { background: rgba(168,85,247,0.15); border: 1px solid var(--border-dim); color: var(--purple); }
+        .mode-badge.html { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.3); color: #fbbf24; }
+
+        .btn.copied { background: linear-gradient(135deg, #14532d, #166534) !important; border-color: var(--success) !important; color: var(--success) !important; box-shadow: 0 0 15px rgba(0,255,136,0.3) !important; }
+
+        /* ── Spell Check Modal ───────────────────────────────────── */
+        .spell-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .spell-modal { background: #1a0033; border: 2px solid var(--purple); border-radius: 15px; box-shadow: 0 0 40px var(--purple-dark); max-width: 560px; width: 100%; max-height: 80vh; display: flex; flex-direction: column; overflow: hidden; }
+        .spell-modal-header { background: linear-gradient(135deg, var(--purple-dark), var(--purple-deeper)); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+        .spell-modal-header h3 { font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 900; letter-spacing: 2px; color: #fff; margin: 0; }
+        .spell-modal-close { background: none; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 20px; line-height: 1; padding: 0; }
+        .spell-modal-close:hover { color: #fff; }
+        .spell-modal-body { overflow-y: auto; padding: 16px 20px; flex: 1; }
+        .spell-modal-body::-webkit-scrollbar { width: 6px; } .spell-modal-body::-webkit-scrollbar-track { background: #08001a; } .spell-modal-body::-webkit-scrollbar-thumb { background: var(--border-dim); border-radius: 3px; }
+        .spell-issue { border: 1px solid var(--border-dim); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; background: rgba(26,0,51,0.6); }
+        .spell-issue:last-child { margin-bottom: 0; }
+        .spell-issue-word { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #ff6060; margin-bottom: 4px; }
+        .spell-issue-msg { font-size: 12px; color: rgba(233,213,255,0.55); margin-bottom: 10px; line-height: 1.4; }
+        .spell-suggestions { display: flex; flex-wrap: wrap; gap: 6px; }
+        .spell-sug-btn { background: rgba(168,85,247,0.1); border: 1px solid var(--border-dim); border-radius: 6px; color: var(--purple); cursor: pointer; font-family: 'Share Tech Mono', monospace; font-size: 12px; padding: 5px 12px; transition: all 0.15s; }
+        .spell-sug-btn:hover { background: rgba(168,85,247,0.25); border-color: var(--purple); box-shadow: 0 0 8px rgba(168,85,247,0.3); }
+        .spell-ignore-btn { background: none; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: rgba(233,213,255,0.35); cursor: pointer; font-family: 'Share Tech Mono', monospace; font-size: 11px; padding: 5px 10px; transition: all 0.15s; }
+        .spell-ignore-btn:hover { border-color: rgba(255,255,255,0.3); color: rgba(233,213,255,0.6); }
+        .spell-add-btn { background: none; border: 1px solid rgba(0,255,136,0.25); border-radius: 6px; color: rgba(0,255,136,0.5); cursor: pointer; font-family: 'Share Tech Mono', monospace; font-size: 11px; padding: 5px 10px; transition: all 0.15s; }
+        .spell-add-btn:hover { border-color: var(--success); color: var(--success); background: rgba(0,255,136,0.05); }
+        .spell-no-errors { text-align: center; padding: 30px 0; }
+        .spell-no-errors .check-icon { font-size: 36px; margin-bottom: 10px; }
+        .spell-no-errors p { font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--success); letter-spacing: 2px; }
+        .spell-loading { text-align: center; padding: 30px 0; font-family: 'Share Tech Mono', monospace; font-size: 12px; color: rgba(168,85,247,0.6); letter-spacing: 2px; }
+        .spell-footer { border-top: 1px solid var(--border-dim); padding: 12px 20px; font-family: 'Share Tech Mono', monospace; font-size: 11px; color: rgba(168,85,247,0.45); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
+
+        @media (max-width: 600px) {
+            .portal-wrap { padding: 24px 14px 60px; }
+            .portal-header { margin-bottom: 28px; }
+            .portal-header .tag-line { letter-spacing: 2px; font-size: 10px; }
+            .step { padding: 6px 4px; gap: 0; }
+            .step-label { display: none; }
+            .step-connector { max-width: 30px; }
+            .panel { padding: 16px; border-radius: 10px; }
+            .panel-title { padding: 10px 16px; margin: -16px -16px 16px -16px; font-size: 11px; border-radius: 8px 8px 0 0; }
+            .toolbar-btn { padding: 7px 10px; font-size: 12px; }
+            .toolbar-sep { margin: 3px 1px; }
+            #blog-content { min-height: 220px; font-size: 14px; }
+            .btn-row { flex-direction: column; }
+            .btn-row .btn { width: 100%; text-align: center; padding: 14px; }
+            .output-toolbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .output-toolbar > div { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
+            .output-toolbar > div .btn { flex: 1; text-align: center; padding: 10px 8px; font-size: 10px; }
+            .view-toggle { flex: 1; }
+            .toggle-btn { flex: 1; text-align: center; }
+            #card-section .output-toolbar { flex-direction: row; align-items: center; }
+            #card-section .output-toolbar .btn { flex: unset; }
+            .hint { font-size: 10px; word-break: break-word; }
+            .info-body.open { max-height: 2200px; }
+            .info-step:nth-last-child(-n+2) { border-bottom: 1px solid var(--border-dim); }
+            .info-step:last-child { border-bottom: none; }
+            .info-step { padding: 14px 14px; }
+            .info-toggle { font-size: 10px; letter-spacing: 1px; padding: 12px 14px; }
+        }
+        @media (max-width: 380px) {
+            .portal-header h1 { font-size: 24px; letter-spacing: 1px; }
+            .editor-toolbar { gap: 2px; padding: 6px 8px; }
+            .toolbar-btn { padding: 6px 7px; font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+<script>
+    window.addEventListener('message', function(e) {
+        if (e.data && e.data.iframeHeight) {
+            document.getElementById('header-frame').style.height = e.data.iframeHeight + 'px';
+        }
+    });
+</script>
+<div class="floating-cards"></div>
+<iframe id="header-frame" src="header.html" scrolling="no"></iframe>
+<div class="portal-wrap">
+
+    <div class="portal-header">
+        <div class="tag-line">// system: blog_compiler v4.0 — offline spell check · offline compatible</div>
+        <h1>POST FORGE</h1>
+        <div class="subtitle">markdown → html · instant · offline compatible</div>
+    </div>
+
+    <div class="info-box" id="info-box">
+        <button class="info-toggle" onclick="toggleInfo()" id="info-toggle">
+            <span>&#x3F; How to use Post Forge</span>
+            <span class="info-arrow" id="info-arrow">&#x25BC;</span>
+        </button>
+        <div class="info-body" id="info-body">
+            <div class="info-grid">
+                <div class="info-step"><div class="info-num">1</div><div><strong>Fill in metadata</strong><p>Enter your post title, date, category, optional tags and summary. Tags are added by typing and pressing Enter.</p></div></div>
+                <div class="info-step"><div class="info-num">2</div><div><strong>Write in Markdown</strong><p>Use the toolbar shortcuts or write Markdown directly. <code>**bold**</code>, <code>*italic*</code>, <code>## Heading</code>, <code>- lists</code>, <code>&gt; quotes</code>, and code blocks all work.</p></div></div>
+                <div class="info-step"><div class="info-num">3</div><div><strong>Hit Compile</strong><p>Markdown is instantly converted to HTML using marked.js — no AI, no internet required. Two outputs appear below.</p></div></div>
+                <div class="info-step"><div class="info-num">4</div><div><strong>Download the post file</strong><p>Click <em>Download .html</em> to save the post page (e.g. <code>my-post.html</code>). Upload this to your site folder.</p></div></div>
+                <div class="info-step"><div class="info-num">5</div><div><strong>Add the card snippet</strong><p>Copy the card snippet and paste it at the <strong>top</strong> of the <code>&lt;div class="blog-grid"&gt;</code> in <code>blogpostpage.html</code> so newest posts appear first.</p></div></div>
+                <div class="info-step"><div class="info-num">6</div><div><strong>Upload both files</strong><p>Upload the <code>.html</code> post file and your updated <code>blogpostpage.html</code> to your site. Done!</p></div></div>
+            </div>
+            <div class="info-deps">
+                <div class="info-deps-title">&#x26A0; CSS Dependencies</div>
+                <p class="info-deps-desc">The generated post pages rely on classes defined in <code>style.css</code>. If you're using this tool for your own site, you'll need to adapt the generated HTML to match your site's structure.</p>
+                <div class="deps-grid">
+                    <div class="deps-col">
+                        <div class="deps-group-label">Post Page — needs in style.css</div>
+                        <div class="dep-row"><code>body</code><span>Background, font, base colour</span></div>
+                        <div class="dep-row"><code>.container-single</code><span>Page max-width &amp; centering</span></div>
+                        <div class="dep-row"><code>main</code><span>Content box (background, border, shadow)</span></div>
+                        <div class="dep-row"><code>h2</code><span>Post title — styled as a header bar</span></div>
+                        <div class="dep-row"><code>h4</code><span>Category label text style</span></div>
+                        <div class="dep-row"><code>p, a</code><span>Body text &amp; link colours</span></div>
+                        <div class="dep-row"><code>.links-list li a</code><span>Tag pill appearance</span></div>
+                        <div class="dep-row"><code>.floating-cards</code><span>Decorative background elements</span></div>
+                        <div class="dep-row"><code>#header-frame</code><span>Sticky nav iframe positioning</span></div>
+                    </div>
+                    <div class="deps-col">
+                        <div class="deps-group-label">Blog Listing Page — built-in styles</div>
+                        <div class="dep-row"><code>.post-card</code><span>Card background &amp; border</span></div>
+                        <div class="dep-row"><code>.post-card-title</code><span>Post title text</span></div>
+                        <div class="dep-row"><code>.post-card-meta</code><span>Date + category row</span></div>
+                        <div class="dep-row"><code>.post-card-date</code><span>Date text style</span></div>
+                        <div class="dep-row"><code>.post-card-category</code><span>Category badge pill</span></div>
+                        <div class="dep-row"><code>.post-card-summary</code><span>Summary paragraph</span></div>
+                        <div class="dep-row"><code>.post-card-tag</code><span>Tag chip style</span></div>
+                        <div class="dep-row"><code>.post-card-arrow</code><span>→ arrow indicator</span></div>
+                        <div class="dep-row"><code>.blog-grid</code><span>Post list flex column</span></div>
+                        <div class="dep-row"><code>.filter-bar / .filter-btn</code><span>Category filter row</span></div>
+                    </div>
+                </div>
+                <p class="info-deps-note">&#x2139; The listing page styles are self-contained inside <code>blogpostpage.html</code>. The post page styles depend on <code>style.css</code> being present in the same folder.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel" id="upload-panel">
+        <div class="panel-title">&#x1F4C2; Load Existing Post</div>
+        <p style="font-size:13px;color:rgba(233,213,255,0.6);margin-bottom:14px;line-height:1.5;">Upload a previously generated <code style="color:#c084fc;font-family:'Share Tech Mono',monospace;font-size:11px;">.html</code> post file to reload it into the editor for changes.</p>
+        <div class="upload-drop" id="upload-drop" onclick="document.getElementById('file-input').click()">
+            <div class="upload-icon">&#x2B06;</div>
+            <div class="upload-label">Click to choose a post .html file</div>
+            <div class="upload-sub">or drag &amp; drop it here</div>
+            <input type="file" id="file-input" accept=".html" style="display:none" onchange="loadFile(event)">
+        </div>
+        <div id="upload-status" class="upload-status" style="display:none;"></div>
+    </div>
+
+    <div class="steps">
+        <div class="step active" id="step-1"><div class="step-num">1</div><span class="step-label">WRITE</span></div>
+        <div class="step-connector"></div>
+        <div class="step" id="step-2"><div class="step-num">2</div><span class="step-label">COMPILE</span></div>
+        <div class="step-connector"></div>
+        <div class="step" id="step-3"><div class="step-num">3</div><span class="step-label">DEPLOY</span></div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title">Post Metadata</div>
+        <div class="form-row" style="margin-bottom:16px">
+            <div><label for="post-title">Title</label><input type="text" id="post-title" placeholder="Enter post title..."></div>
+            <div><label for="post-date">Date</label><input type="date" id="post-date"></div>
+        </div>
+        <div class="form-row" style="margin-bottom:16px">
+            <div>
+                <label for="post-category">Category</label>
+                <select id="post-category">
+                    <option value="">— Select —</option>
+                    <option>Gaming</option><option>Tech</option><option>Tutorials</option>
+                    <option>Reviews</option><option>News</option><option>Personal</option><option>Other</option>
+                </select>
+            </div>
+            <div>
+                <label>Tags <span style="font-size:10px;opacity:0.5">(press Enter)</span></label>
+                <div class="tags-container" id="tags-container"><input type="text" id="tag-input" placeholder="add tag..."></div>
+            </div>
+        </div>
+        <div><label for="post-summary">Summary <span style="font-size:10px;opacity:0.5">(optional)</span></label><input type="text" id="post-summary" placeholder="One-line summary shown under the title..."></div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title">Content <span class="mode-badge markdown" id="mode-badge">Markdown</span></div>
+        <div class="editor-toolbar">
+            <button class="toolbar-btn" onclick="wrap('**','**')">B</button>
+            <button class="toolbar-btn" onclick="wrap('*','*')" style="font-style:italic">I</button>
+            <button class="toolbar-btn" onclick="wrap('~~','~~')">S&#x0336;</button>
+            <button class="toolbar-btn" onclick="wrap('`','`')">`&nbsp;`</button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" onclick="insertLine('## ')">H2</button>
+            <button class="toolbar-btn" onclick="insertLine('### ')">H3</button>
+            <button class="toolbar-btn" onclick="insertLine('#### ')">H4</button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" onclick="insertLine('- ')">• List</button>
+            <button class="toolbar-btn" onclick="insertLine('1. ')">1. List</button>
+            <button class="toolbar-btn" onclick="insertLine('> ')">Quote</button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" onclick="insertCodeBlock()">Code Block</button>
+            <button class="toolbar-btn" onclick="insertLine('---')">— HR</button>
+            <button class="toolbar-btn" onclick="insertLink()">Link</button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" onclick="runSpellCheck()">✦ Spell Check</button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" onclick="clearEditor()" style="color:rgba(255,80,80,0.6)">Clear</button>
+        </div>
+        <textarea id="blog-content" placeholder="Write your post in Markdown..."></textarea>
+        <div class="char-counter"><span id="char-count">0</span> characters · <span id="word-count">0</span> words</div>
+    </div>
+
+    <div class="btn-row" style="margin-bottom:32px">
+        <button class="btn btn-secondary" onclick="clearAll()">Reset</button>
+        <button class="btn btn-primary" onclick="compilePost()">&#x2B21; Compile Post</button>
+    </div>
+
+    <div id="output-section">
+        <div class="output-toolbar">
+            <div class="output-toolbar-title"><div class="dot-blink"></div>Post HTML Ready</div>
+            <div style="display:flex;gap:8px;align-items:center">
+                <div class="view-toggle">
+                    <button class="toggle-btn active" id="toggle-code" onclick="showCode()">Code</button>
+                    <button class="toggle-btn" id="toggle-preview" onclick="showPreview()">Preview</button>
+                </div>
+                <button class="btn btn-accent" onclick="downloadHTML()">&#x2193; Download .html</button>
+                <button class="btn btn-secondary" onclick="copyHTML(this)">Copy</button>
+            </div>
+        </div>
+        <pre id="html-output" class="code-box"></pre>
+        <iframe id="preview-frame" sandbox="allow-same-origin"></iframe>
+    </div>
+
+    <div id="card-section">
+        <div class="output-toolbar" style="margin-top:32px;">
+            <div class="output-toolbar-title" style="color:#c084fc;">
+                <div class="dot-blink" style="background:#c084fc;box-shadow:0 0 8px #c084fc;"></div>
+                blogpostpage.html Card Snippet
+            </div>
+            <button class="btn btn-secondary" style="color:#c084fc;border-color:#c084fc;" onclick="copyCard(this)">Copy Snippet</button>
+        </div>
+        <p class="hint">&#x2192; Paste inside <code>&lt;div class="blog-grid"&gt;</code> in blogpostpage.html (newest at top)</p>
+        <pre id="card-output" class="code-box"></pre>
+    </div>
+
+    <!-- Spell Check Modal -->
+    <div class="spell-modal-overlay" id="spell-overlay" style="display:none;" onclick="closeSpellModal(event)">
+        <div class="spell-modal">
+            <div class="spell-modal-header">
+                <h3>✦ SPELL CHECK</h3>
+                <button class="spell-modal-close" onclick="document.getElementById('spell-overlay').style.display='none'">×</button>
+            </div>
+            <div class="spell-modal-body" id="spell-body"></div>
+            <div class="spell-footer">
+                <span id="spell-count"></span>
+                <span>offline dictionary · 2787 words</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// OFFLINE DICTIONARY
+// ═══════════════════════════════════════════════════════════════
+const DICT_RAW = `abilities ability able about above absence absent absolute accept accepted accepting accepts access accessed accessible
+accessing accesss accidentally accommodate accompany accomplish accomplished accomplishes accomplishing account accounts accurate accurately achieve achieved
+achievement achievements achieves achieving acknowledgment acquire acquired acquires acquiring across act acted acting action actions
+active actively activities activity acts actual actually adapt adapted adapting adapts add added adding addition
+additional additionally additions address addressed addresses addressing addresss adds adequate adjacent adjust adjusted adjusting adjusts
+admire adopt adult advanced advancedly advantage advantageous advantages adventure adventures advice affect affected affectedly affection
+afford afraid after afternoon again against age ages aggravate aggressive ago agree agreed agreement ahead
+aim aimed aiming alert algorithm algorithms aligned alignedly alike alive all alleviate almost along already
+also alternate although altogether always am amazing amber ambiguous ambiguously ambition ambitious among amongst amount
+amounts an analyses analysis analysises analyze analyzed analyzes analyzing ancient and android anger angry animal
+animated animatedly animation animations announce announced announces announcing annoy annual annually anonymous anonymously another answer
+answers anxious any apart api apis apology app apparent apparently appear application applications applied apply
+applyed applying applys appreciate approach approached approaches approaching appropriate appropriately approve approved approves approving approximate
+approximately apps are area areas arent argument arguments arise armor around arrange arranged arrangement arranges
+arranging array article articles as aside ask asked asking asks asleep aspect aspects assassination asset
+assets assignment assignments assume assumed assumes assuming async at ate attach attached attaches attaching attack
+attempt attempted attempting attempts attend attended attending attends attitude attract attribute attributes audience audiences authentication
+author authority authorization authors automatic automatically available availably average avoid avoided avoiding avoids award awards
+aware awesome awesomely awful awkward aws azure back backend background backgrounds bad badly balance balanced
+barely base based bases bash basic basically basing battle be bear beautiful beautifully beauty became
+because become bed been before began begin beginning begins begun behavior behaviors beige being belief
+believe below beneath benefit beside besides best better between beyond big bigger biggest bigly billion
+binary bit bitrate black blank blockchain blog blogs blue board boat bodies body book books
+boolean bootstrap border bored born boss bosses both bother bought bound brave break breaking breaks
+bright brighter brightest brightly bring bringing brings broad broader broadest broadly broke broken brokenly brought
+brown browser browsers bug bugs build builded building builds built burden busily busy but button
+buttons buy buying buys by bytes cache calculate calculated calculatedly calculates calculating calendar call callback
+called calling calls calm came campaign campaigns can cant capable capacity capture captured captures capturing
+care caring carried case cast catch catches catching categories category caught cause causes cdn cell
+center central certain chair challenge chance change changeable changed changes changing channel channels chapter character
+characters charge charged charges charging chat chats cheap cheaper cheapest cheaply check checked checking checkpoint
+checks cheerful child children choice choices choose choosed chooses choosing chose chosen chrome circumstance claim
+class classes classic clean cleaned cleaner cleanest cleaning cleanly cleans clear cleared clearer clearest clearing
+clearly clears cli click clicked clicking clicks client clients close closed closedly closely closer closes
+closest closing cloud club cluster coast code codes cold colder coldest coldly collaborate collaborated collaborates
+collaborating colleague collect collection collections color colors column combo come comes comfort comfortable coming comment
+comments common commonly communicate communicated communicates communicating communities community companion comparative compare compared compares comparing
+comparison comparisons compassion compatible compatibly competitive compile complete completed completely completes completing complex complexly component
+components comprehensive concept concepts concern conclusion condition confidence confident confidently config configuration configurations configure configured
+configures configuring confused connect connected connecting connection connections connects conscience conscientious conscious consider considerably consideration
+considered considering considers consistent consistently console container content contents context contexts continuous control controller controls
+controversy convenient conversation conversations cool cooldown cooler coolest coolly cooperative copies copy copyed copying copys
+correct correctly cors cost costs could couldnt count counts courage course courses cover covers cpu
+crafting crash crashes create created creates creating creation creations creative creativity crimson criteria criterion critical
+css cultural culture cultures cup curiosity curious current currently custom customly customs cut cuts cutting
+cyan daemon daily damage danger dare dark darker darkest darkly data database datas datum day
+days dead deadly death debate debug debuged debuging debugs decent decided decision decisions dedicated dedication
+deep deeper deepest deeply default defaultly defaults defeat defense define defined definedly defines defining definitely
+definition definitions delete deleted deletes deleting deliberate deliver delivered delivering delivers demand dense dependent deploy
+depressed describe described describes describing description descriptions design designed designing designs desire despite detail details
+detect detected detecting detects determination determined develop developed developer developing develops devops did didnt difference
+differences difficulty digital dilemma direct direction directions directly disabled disabledly disappear disappoint disappointed discipline discovery
+discussion disk display displayed displaying displays distinct disturbed diverse diversity dns do docker doctor document
+documents dodge does doing dom dominant dont door double doubt download downloads draw drawed drawing
+drawn draws dream drew drive drived driven drives driving drop dropdown drove dungeon duration durations
+during dynamic dynamically each easier easiest easily easy easyly eat eaten eating eats edge edit
+edited editing edits education effect effective effects efficiency efficient efficiently effort eight eighteen eighth eighty
+either elaborate element elements eleven elsewhere email emails embarrass emotion emotional empathy empty enable enabled
+enabledly enables enabling encourage encryption end endpoint energy engaged engine engines enormous ensure ensured ensures
+ensuring enter entered entering enters enthusiasm enthusiastic entire environment environmental environments equal equality equipment equivalent
+error errors escape especially esports essay essential establish established establishes establishing ethical evaluate evaluated evaluates
+evaluating even evening event events eventually every everyday evidence evident evolution exact exactly exaggerate examine
+example examples excellence excellent except excessive excited exclusive execute executed executes executing exhausted existence existing
+existingly expect expectation experience experiences experimental experimentally explain explained explaining explains explanation explanations explicit explicitly
+export exported exporting exports express expression extend extended extending extends external externally eye face faction
+failure fair faith fall fallen falling falls fame familiar farming fascinate fast faster fastest fastly
+favor fear feature features feedback feedbacks feel feeling feels fell fellow felt fetch few fewer
+fewest fewly field fifteen fifth fifty fight fighting fights file files filter filtered filtering filters
+final finally find finding finds fine finely finer finest finish firefox firewall first five fix
+fixed fixes fixing flag flags flat flew flexibility flexible flexibly flies flow flown flows fly
+flying foci focus focused focuses focusing focuss folder folders followed following font fonts for force
+foreign forget forgets forgetting forgive forgot forgotten format formated formating formats formatted formattedly formerly forty
+forward fought found four fourteen fourth fps frame framework frameworks free freedom freely frequencies frequency
+frequently fresh freshly friendly friendship from frontend frustrated full fullly fully function functional functionally functions
+fundamental furthermore future game gameplay games gauge gave gear general generally generate generated generates generating
+generous genuine get gets getting git github give given gives giving global globally go goal
+goes going golang gold gone good goodly got gotten government gpu grammar graphics grateful gray
+great greater greatest greatly green grew grey grief grind group groups grow growing grown grows
+growth guarantee guess guide guides guild guilt guilty habit had hadnt half hand handle handled
+handles handling hang happen happened happiness happy hard harder hardest hardly harsh has hash hasnt
+hate have havent having he header headers health healths heap hear heard hearing hears heavier
+heaviest heavily heavy heavyly hed height held hell help helped helpful helping helps hence her
+here herself hes hidden hiddenly high higher highest highlight highly him himself hint hints his
+historic histories history hitbox hold holding holds home homes honest hope hopeful horde hot hotly
+hotter hottest hourly how however html http https humanity humble humor humorous hundred hypocrisy id
+ide idea ideal identify identifyed identifying identifys identity if ignorance ill im image images imaginary
+imagination immediately immense impact impacts implement implementation implementations implemented implementing implements import importance important importantly
+imported importing imports impress impressive improve improved improvement improvements improves improving in inactive inactively include
+included includes including income incorrect incorrectly incredible indeed independence independent independently index indexes indicate indicated
+indicates indicating indices indie indigo indispensable individual individually influence informal information initially initiative inner innerly
+innovation input inputs insecure insecurely insight inspiration inspire install installed installing installs instant instead integrate
+integrated integratedly integrates integrating integration integrations intellectual intelligence intense interaction interactions interest interested interesting interface
+interfaces internal internally into introduce introduced introduces introducing introduction intuition invalid invalidly inventories inventory irresistible
+is isnt it item items its itself ive ivory javascript jealous job jobs join joystick
+json judgment just justice jwt keep keeping keeps keily kept kernel key keyboard keys kill
+kind knew know knowing knowledge known knows kubernetes label labels lag lambda language languages large
+largely larger largest last lastly late lately latency later latest latestly launch launched launcher launches
+launching lavender law layer layers layout layouts lead leadership leading leads learning least leave leaves
+leaving led left legitimate less let lets letting level levels liberty libraries library license light
+lighter lightest lightly likely limitation limited limitedly link linked links linux liquefy list listed listen
+listing lists literally little littlely load loaded loading loads local localhost locally location locations log
+logic login logins lonely long longer longest longly loop loops loot lose loses losing loss
+losses lost loud louder loudest loudly love low lower lowest lowly loyal loyalty lucky mac
+mad made magenta main mainly maintenance make makes making man manage managed manager manages managing
+maneuver manual manually many manyly map maps margin margins mark marked marking marks maroon match
+matches matchmaking material mathematics matrices matrix matter may maybe me mean meaning meaningful means meant
+meanwhile measure measured measures measuring mechanic media mediocre medium meet meeting meets member members memories
+memory men menu menus merge merged merges merging message messages met method methods middle middleware
+midnight might millennium million mind mindful minor mischievous missed mission misspell mmorpg mob mobile mode
+model models moderate modern modernly modes modifier module modules mongodb monitor monitored monitoring monitors month
+monthly months more moreover morning most mostly motion motivated motivation mouth move moved movement moves
+moving much multiplayer multiple multiply must mustnt mutual my myself mysql mysterious name named names
+namespace naming narrative narrow narrower narrowest narrowly nature navy near nearly necessarily necessary necessity need
+needed needing needs negative negatively neither nervous network networks never nevertheless new newer newest newly
+next nextly nginx nice nicely nicer nicest night nine nineteen ninety ninth no node nodes
+noise nonetheless noon nor normal normally not note noted notes notice noticeable notification notifications noting
+novel now npc npm null number numbers numerous object objective objects obvious obviously occasion occasional
+occasionally occurrence of offer official officially offline often old older oldest oldly olive omission on
+one online only open opened opening openly opens operating opinion opportunity optimize optimized optimizes optimizing
+option optional optionally options or orange order orders ordinary organization organize organized organizes organizing origin
+original originally orm other otherwise ought our ourselves out outdated outdatedly output outputs outside outstanding
+over overall overflow overview overwhelm overwhelming overworld own owner owners ownership package packages page pages
+paid panel panels paragraph parallel parameter parameters part partial partially particular particularly parts passion password
+passwords patch path paths patience patient pay paying pays peace performance performances perhaps period permission
+permissions perseverance person personality personnel perspective phase phases phenomena phenomenon philosophy pick picked picking picks
+picture pink place plan planed planing plans platform player players playthrough playtime pleasant pleased pleasure
+plugin point polite poor poorer poorest poorly port positive possession possible possibly post postgresql posts
+potential poverty power powerful powerfully practical practically precise precisely preference prefix prefixes prepare prepared prepares
+preparing presence press previous previously primarily primary principle print printed printing prints priorities priority private
+privately privilege probably problem procedure process processed processes processing processs professional program programs progress project
+projects prominent promise pronunciation proper properly protocol proud prove psychological public publically publication publicly publish
+published publishes publishing pure purely purple purpose push pushed pushes pushing put puts putting puzzle
+python quality queries query quest question questionnaire questions queue quick quicker quickest quickly quite quote
+radical radii radius raid ran random randomly rank ranks rate rather rating ratings reach reached
+reaches reaching react read readily reading reads ready real reality really reason reasonable reasoning reasons
+receive recent recently recommend recommendation recommended recommending recommends record recorded recording records red redis reduce
+reduced reduces reducing reference referring reflect regarding regex regret relationship relative relatively relax release released
+releases releasing relevant reliable relief religious reload reloaded reloading reloads remain remarkable remote remotely remove
+removed removes removing repetition replace replaced replaces replacing reply report reported reporting reports repository represent
+request requested requesting requests required requiredly requirement requirements reset reseted reseting resets resolve resolved resolves
+resolving resource resources respawn respect respectful response responses responsibility responsible responsive responsively rest restart restarted
+restarting restarts result results return reveal review reviewed reviewing reviews revival rewards rhythm rich richer
+richest richly right rightly rise risk river role roles rose round route router routes rpg
+rule rules run runed runing running runs runtime sacrifice sad safe safely safer safest safety
+said salmon same sass sat satisfaction satisfied save saved saves saving saw say saying says
+scared scarlet scene score scores screen screens search searched searches searching season second secondary secretary
+section sections secure securely security see seeing seen sees seize select selected selecting selective selectively
+selects self send sended sending sends sensitive sent separate serious server servers service session sessions
+set seted seting sets setting settings seven seventeen seventh seventy severe shall shame she shed
+shell shes short shortcut shortcuts shorter shortest shortly should shouldnt show showed showing shown shows
+shy sight signal significant silver similar simple simplely simpler simplest simplicity simply since sincere single
+sit sits sitting situation six sixteen sixth sixty size sizes skill skills sleep sleeping sleeps
+slept slip slow slower slowest slowly small smaller smallest smallly smart smarter smartest smartly smooth
+smoother smoothest smoothly so social society socket soft softer softest softly solution solve some someone
+sometimes soon sooner soonest soonly sophisticated sorry sort sorted sorting sorts sound source sources space
+spaces spawn speak speaking speaks special specially specific specifically spectacular speed speedrun spend spending spends
+spent spirit spoke spoken sql ssh ssl stable stably stack stacks stand standard standardly standing
+stands start started starting starts state states static statically stats status statuses stay stealth step
+steps still stood stop stoped stoping stops storage storages story straight strategy strength stress string
+strings strong stronger strongest strongly struct structure structures study style styles stylesheet subject subjects subsequently
+substantial success successful successfully such suddenly suggestion summary superior supersede support supported supporting supports surface
+surprise surprised surprising survival swam swim swimming swims swum symbolic syntax system systematic systems table
+tables tag tags take taken takes taking talent talk tall taller tallest tallly tan taught
+tcp teach teacher teaches teaching teal team teams technically television tell telling tells template temporarily
+temporary ten tendency tenth term terminal terms terrain test tested testing tests than thankful that
+thats the their them theme themes themselves then there therefore these they theyd theyll theyre
+theyve thick thicker thickest thickly thin think thinking thinks thinly thinner thinnest third thirteen thirty
+this those though thought thousand three threshold threw through throughout throw throwing thrown throws thus
+tight tighter tightest tightly time times title titles to today together token tokens told tomorrow
+too took tool tools tooltip tooltips top topic topics total totally tournament toward track tracked
+tracking tracks tradition traditional tragedy transfer transfered transfering transfers transparent travel trigger triggered triggering triggers
+trillion true truely truly trust truth turn turquoise tutorial twelfth twelve twenty twice two type
+typed types typescript typical typically typing ubuntu ultimate ultimately uncomfortable under understand understanding understands understood
+unified unifiedly uniform unique uniquely unit unity universal universally unless unnecessary unsafe unsafely until unusual
+up update updated updates updating upgrade upload uploaded uploading uploads upon upset url urls us
+use used useful usefully user users uses using usually vacuum valid validation validly valuable value
+values variable variables various vary vast vengeance verify verifyed verifying verifys version versions vertex vertical
+vertices very via vicious view viewed viewing views villain violet virtual visible visibly vision visit
+visual visually voice voluntary vote vulnerable wake wakes waking walk want wanted wanting wants warm
+warmer warmest warmly warning warnings was wasnt watch we weak weaker weakest weakly weapon wear
+wearing wears web webpack webs websocket wed weekly well went were werent weve what when
+where whereas whether which while white who whom why wide widely wider widespread widest widget
+widgets will win window windows winning wins wisdom with within without woke woken woman women
+won wonderful wont word words wore work worked workflow workflows working works worn worry worth
+would wouldnt write writed writes writing written wrote yaml yearly yellow yesterday yet you youd
+youll young younger youngest youngly your youre yourself yourselves youve zero zone`;
+const DICT = new Set(DICT_RAW.split(/\s+/).filter(Boolean));
+const USER_DICT = new Set(); // words added this session
+
+function inDict(w) { return DICT.has(w) || USER_DICT.has(w); }
+
+// ── Markdown-aware tokeniser (preserves offsets) ──────────────
+function tokenise(text) {
+    // Replace regions we should skip with spaces of equal length
+    // so offsets into the original string remain valid.
+    let s = text
+        .replace(/```[\s\S]*?```/g,   m => ' '.repeat(m.length))  // fenced code
+        .replace(/`[^`\n]+`/g,        m => ' '.repeat(m.length))  // inline code
+        .replace(/https?:\/\/\S+/g,   m => ' '.repeat(m.length))  // URLs
+        .replace(/\[([^\]]*)\]\([^)]*\)/g, (m, t) => t.padEnd(m.length, ' ')) // links
+        .replace(/^#{1,6} /gm,        m => ' '.repeat(m.length))  // headings
+        .replace(/^[-*+] /gm,         '  ')                        // ul markers
+        .replace(/^\d+\. /gm,         m => ' '.repeat(m.length)); // ol markers
+
+    const tokens = [];
+    const re = /\b([a-zA-Z]{2,})\b/g;
+    let m;
+    while ((m = re.exec(s)) !== null) {
+        tokens.push({ word: m[1], offset: m.index });
+    }
+    return tokens;
+}
+
+function shouldSkip(word) {
+    if (word.length < 2) return true;
+    if (word === word.toUpperCase()) return true;       // acronym
+    if (/^[A-Z]/.test(word)) return true;              // proper noun / start of sentence
+    if (/\d/.test(word)) return true;                  // contains digit
+    return false;
+}
+
+// ── Levenshtein edit-distance-1 candidates ────────────────────
+const ALPHA = 'abcdefghijklmnopqrstuvwxyz';
+function edits1(word) {
+    const res = new Set();
+    const n = word.length;
+    for (let i = 0; i < n; i++)      res.add(word.slice(0,i) + word.slice(i+1));           // delete
+    for (let i = 0; i < n-1; i++)    res.add(word.slice(0,i)+word[i+1]+word[i]+word.slice(i+2)); // transpose
+    for (let i = 0; i < n; i++)      for (const c of ALPHA) res.add(word.slice(0,i)+c+word.slice(i+1)); // replace
+    for (let i = 0; i <= n; i++)     for (const c of ALPHA) res.add(word.slice(0,i)+c+word.slice(i));   // insert
+    return res;
+}
+
+function getSuggestions(word) {
+    const lower = word.toLowerCase();
+    let sugs = [...edits1(lower)].filter(w => inDict(w));
+    if (sugs.length === 0 && lower.length <= 9) {
+        const e2 = new Set();
+        for (const e of edits1(lower)) for (const f of edits1(e)) e2.add(f);
+        sugs = [...e2].filter(w => inDict(w));
+    }
+    return sugs.slice(0, 5);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SPELL CHECK LOGIC
+// ═══════════════════════════════════════════════════════════════
+let spellIssues = [];
+
+function runSpellCheck() {
+    const text = contentEl.value.trim();
+    if (!text) { alert('Nothing to check — write some content first.'); return; }
+    document.getElementById('spell-overlay').style.display = 'flex';
+    document.getElementById('spell-body').innerHTML = '<div class="spell-loading">⟳ Checking...</div>';
+    document.getElementById('spell-count').textContent = '';
+    // Defer so modal renders before potentially slow loop
+    setTimeout(() => {
+        const tokens = tokenise(contentEl.value);
+        spellIssues = [];
+        const seen = new Set();
+        for (const { word, offset } of tokens) {
+            if (shouldSkip(word)) continue;
+            const lower = word.toLowerCase();
+            if (inDict(lower) || seen.has(lower)) continue;
+            seen.add(lower);
+            spellIssues.push({
+                offset, length: word.length, word,
+                message: 'Possible misspelling',
+                replacements: getSuggestions(word).map(v => ({ value: v }))
+            });
+        }
+        renderSpellResults();
+    }, 20);
+}
+
+function renderSpellResults() {
+    const body  = document.getElementById('spell-body');
+    const count = document.getElementById('spell-count');
+    if (!spellIssues.length) {
+        body.innerHTML = '<div class="spell-no-errors"><div class="check-icon">✓</div><p>No issues found!</p></div>';
+        count.textContent = '0 issues';
+        return;
+    }
+    count.textContent = spellIssues.length + ' issue' + (spellIssues.length !== 1 ? 's' : '') + ' found';
+    body.innerHTML = spellIssues.map((issue, idx) => {
+        const sugs = (issue.replacements || []).slice(0, 5);
+        const sugHTML = sugs.length
+            ? sugs.map(s => `<button class="spell-sug-btn" onclick="applyFix(${idx},'${escapeAttr(s.value)}')">${escapeHTML(s.value)}</button>`).join('')
+            : '<span style="font-size:12px;color:rgba(233,213,255,0.3);font-family:\'Share Tech Mono\',monospace;">No suggestions</span>';
+        return `<div class="spell-issue" id="spell-issue-${idx}">
+            <div class="spell-issue-word">"${escapeHTML(issue.word)}"</div>
+            <div class="spell-issue-msg">${escapeHTML(issue.message)}</div>
+            <div class="spell-suggestions">
+                ${sugHTML}
+                <button class="spell-add-btn" onclick="addToDict(${idx})">+ Add to dict</button>
+                <button class="spell-ignore-btn" onclick="ignoreIssue(${idx})">Ignore</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function applyFix(idx, replacement) {
+    const issue = spellIssues[idx];
+    if (!issue) return;
+    const orig   = contentEl.value;
+    contentEl.value = orig.slice(0, issue.offset) + replacement + orig.slice(issue.offset + issue.length);
+    contentEl.dispatchEvent(new Event('input'));
+    const diff = replacement.length - issue.length;
+    spellIssues.forEach((iss, i) => { if (i > idx && iss.offset > issue.offset) iss.offset += diff; });
+    ignoreIssue(idx);
+}
+
+function addToDict(idx) {
+    const issue = spellIssues[idx];
+    if (!issue) return;
+    USER_DICT.add(issue.word.toLowerCase());
+    ignoreIssue(idx);
+}
+
+function ignoreIssue(idx) {
+    spellIssues.splice(idx, 1);
+    renderSpellResults();
+}
+
+function closeSpellModal(e) {
+    if (e && e.target !== document.getElementById('spell-overlay')) return;
+    document.getElementById('spell-overlay').style.display = 'none';
+}
+
+function escapeAttr(str) { return str.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+// ═══════════════════════════════════════════════════════════════
+// EXISTING FUNCTIONALITY (unchanged)
+// ═══════════════════════════════════════════════════════════════
+let isHTMLMode = false;
+function setMode(html) {
+    isHTMLMode = html;
+    const b = document.getElementById('mode-badge');
+    b.textContent = html ? 'HTML' : 'Markdown';
+    b.className = 'mode-badge ' + (html ? 'html' : 'markdown');
+}
+function showUploadStatus(msg, ok) {
+    const el = document.getElementById('upload-status');
+    el.textContent = msg; el.className = 'upload-status '+(ok?'ok':'err'); el.style.display='block';
+}
+const dropZone = document.getElementById('upload-drop');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); const f=e.dataTransfer.files[0]; if(f) parseHTMLFile(f); });
+function loadFile(e) { const f=e.target.files[0]; if(f) parseHTMLFile(f); }
+function parseHTMLFile(file) {
+    if (!file.name.endsWith('.html')) { showUploadStatus('✗ Please upload a .html file', false); return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(e.target.result, 'text/html');
+            const h2 = doc.querySelector('main h2');
+            document.getElementById('post-title').value = h2 ? h2.textContent.trim() : '';
+            const timeEl = doc.querySelector('time[datetime]');
+            if (timeEl) document.getElementById('post-date').value = timeEl.getAttribute('datetime');
+            const h4 = doc.querySelector('main h4');
+            const catSelect = document.getElementById('post-category');
+            if (h4) { const ct=h4.textContent.trim(); const opt=Array.from(catSelect.options).find(o=>o.value===ct); catSelect.value=opt?ct:''; } else catSelect.value='';
+            const summaryEl = doc.querySelector('main > p:not([style])');
+            document.getElementById('post-summary').value = summaryEl ? summaryEl.textContent.trim() : '';
+            tags.length = 0;
+            doc.querySelectorAll('.links-list li a').forEach(a => { const t=a.textContent.trim(); if(t) tags.push(t); });
+            renderTags();
+            const hr = doc.querySelector('main hr');
+            let bodyContent = '';
+            if (hr) { let node=hr.nextSibling; const tmp=document.createElement('div'); while(node){tmp.appendChild(node.cloneNode(true));node=node.nextSibling;} bodyContent=tmp.innerHTML.trim(); }
+            else { const main=doc.querySelector('main'); bodyContent=main?main.innerHTML:''; }
+            contentEl.value = bodyContent; contentEl.dispatchEvent(new Event('input')); setMode(true);
+            showUploadStatus('✓ Loaded: '+file.name+' — edit and recompile below', true);
+            document.querySelector('.panel:has(#blog-content)').scrollIntoView({behavior:'smooth',block:'start'});
+        } catch(err) { showUploadStatus('✗ Could not parse file: '+err.message, false); }
+    };
+    reader.readAsText(file);
+}
+function toggleInfo() { document.getElementById('info-body').classList.toggle('open'); document.getElementById('info-arrow').classList.toggle('open'); }
+const tags = [];
+const tagInput = document.getElementById('tag-input');
+const tagsCont = document.getElementById('tags-container');
+tagsCont.addEventListener('click', () => tagInput.focus());
+tagInput.addEventListener('keydown', e => {
+    if ((e.key==='Enter'||e.key===',') && tagInput.value.trim()) { e.preventDefault(); addTag(tagInput.value.trim().replace(/,$/,'')); tagInput.value=''; }
+    if (e.key==='Backspace' && !tagInput.value && tags.length) removeTag(tags.length-1);
+});
+function addTag(text) { if(!text||tags.includes(text)) return; tags.push(text); renderTags(); }
+function removeTag(i) { tags.splice(i,1); renderTags(); }
+function renderTags() {
+    tagsCont.querySelectorAll('.tag-chip').forEach(c=>c.remove());
+    tags.forEach((t,i)=>{ const chip=document.createElement('span'); chip.className='tag-chip'; chip.innerHTML=t+'<button onclick="removeTag('+i+')">×</button>'; tagsCont.insertBefore(chip,tagInput); });
+}
+const contentEl = document.getElementById('blog-content');
+contentEl.addEventListener('input', () => {
+    const text=contentEl.value;
+    document.getElementById('char-count').textContent=text.length.toLocaleString();
+    document.getElementById('word-count').textContent=(text.trim()?text.trim().split(/\s+/).length:0).toLocaleString();
+});
+function wrap(before,after) { const ta=contentEl,s=ta.selectionStart,e=ta.selectionEnd; ta.setRangeText(before+(ta.value.slice(s,e)||'text')+after,s,e,'select'); ta.focus(); }
+function insertLine(prefix) { const ta=contentEl,pos=ta.selectionStart; const before=ta.value.slice(0,pos),after=ta.value.slice(pos); const nl=before.length&&!before.endsWith('\n')?'\n':''; ta.value=before+nl+prefix+after; const np=before.length+nl.length+prefix.length; ta.setSelectionRange(np,np); ta.focus(); ta.dispatchEvent(new Event('input')); }
+function insertCodeBlock() { const ta=contentEl,s=ta.selectionStart,e=ta.selectionEnd; ta.setRangeText('```\n'+(ta.value.slice(s,e)||'')+'\n```',s,e,'end'); ta.focus(); }
+function insertLink() { const url=prompt('URL:')||'https://'; wrap('[','](' + url + ')'); }
+function clearEditor() { if(confirm('Clear editor?')) { contentEl.value=''; contentEl.dispatchEvent(new Event('input')); } }
+function clearAll() {
+    if(!confirm('Reset everything?')) return;
+    ['post-title','post-summary'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('post-date').value=new Date().toISOString().split('T')[0];
+    document.getElementById('post-category').value='';
+    contentEl.value=''; contentEl.dispatchEvent(new Event('input'));
+    tags.length=0; renderTags();
+    document.getElementById('output-section').classList.remove('visible');
+    document.getElementById('card-section').classList.remove('visible');
+    document.getElementById('upload-status').style.display='none';
+    document.getElementById('file-input').value='';
+    setMode(false); setStep(1);
+}
+document.getElementById('post-date').value = new Date().toISOString().split('T')[0];
+function setStep(n) { [1,2,3].forEach(i=>{ const el=document.getElementById('step-'+i); el.classList.remove('active','done'); if(i<n) el.classList.add('done'); else if(i===n) el.classList.add('active'); }); }
+function escapeHTML(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+let generatedHTML='', generatedCard='';
+function compilePost() {
+    const title=document.getElementById('post-title').value.trim();
+    const content=contentEl.value.trim();
+    const date=document.getElementById('post-date').value;
+    const category=document.getElementById('post-category').value;
+    const summary=document.getElementById('post-summary').value.trim();
+    if(!title){alert('Please enter a post title.');return;}
+    if(!content){alert('Please write some content first.');return;}
+    setStep(2);
+    const bodyHTML=isHTMLMode?content:marked.parse(content);
+    const dateObj=date?new Date(date+'T00:00:00'):new Date();
+    const dateFormatted=dateObj.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const tagListHTML=tags.length?'<ul class="links-list" style="flex-direction:row;flex-wrap:wrap;">\n            '+tags.map(t=>'<li style="flex:unset"><a href="#">'+escapeHTML(t)+'</a></li>').join('\n            ')+'\n        </ul>':'';
+    const summaryHTML=summary?'<p>'+escapeHTML(summary)+'</p>':'';
+    const categoryHTML=category?'<h4>'+escapeHTML(category)+'</h4>':'';
+    const sc='</'+'script>'; const so='<'+'script>';
+    generatedHTML='<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>'+escapeHTML(title)+' - Gambit\'s website</title>\n    <link href="https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@0,400;0,700;0,900&display=swap" rel="stylesheet">\n    <link rel="stylesheet" href="style.css">\n</head>\n<body>\n    '+so+'\n        window.addEventListener(\'message\', function(e) {\n            if (e.data && e.data.iframeHeight) {\n                document.getElementById(\'header-frame\').style.height = e.data.iframeHeight + \'px\';\n            }\n        });\n    '+sc+'\n    <div class="floating-cards"></div>\n    <iframe id="header-frame" src="header.html" scrolling="no"></iframe>\n    <div class="container-single">\n\n        <main>\n            <h2>'+escapeHTML(title)+'</h2>\n\n            <p style="color:rgba(168,85,247,0.7);font-size:13px;margin-bottom:6px;">\n                <time datetime="'+date+'">'+dateFormatted+'</time>\n            </p>\n            '+categoryHTML+'\n            '+summaryHTML+'\n            '+tagListHTML+'\n\n            <p><a href="blogpostpage.html">&#8592; Back to Blog</a></p>\n\n            <hr style="border:none;border-top:1px solid rgba(168,85,247,0.3);margin:20px 0;">\n\n            '+bodyHTML+'\n        </main>\n\n    </div>\n</body>\n</html>';
+    const slug=title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'blog-post';
+    const tagChips=tags.map(t=>'                        <span class="post-card-tag">'+escapeHTML(t)+'</span>').join('\n');
+    generatedCard='<div class="post-card" data-category="'+escapeHTML(category||'Other')+'">\n    <a href="'+slug+'.html">\n        <div class="post-card-top">\n            <span class="post-card-title">'+escapeHTML(title)+'</span>\n            <div class="post-card-meta">\n                <span class="post-card-date">'+dateFormatted+'</span>\n'+(category?'                <span class="post-card-category">'+escapeHTML(category)+'</span>\n':'')+'            </div>\n        </div>\n'+(summary?'        <p class="post-card-summary">'+escapeHTML(summary)+'</p>\n':'')+(tags.length?'        <div class="post-card-tags">\n'+tagChips+'\n        </div>\n':'')+'        <span class="post-card-arrow">&#x2192;</span>\n    </a>\n</div>';
+    document.getElementById('html-output').textContent=generatedHTML;
+    document.getElementById('card-output').textContent=generatedCard;
+    document.getElementById('output-section').classList.add('visible');
+    document.getElementById('card-section').classList.add('visible');
+    setStep(3);
+    document.getElementById('output-section').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function showCode() { document.getElementById('html-output').style.display='block'; document.getElementById('preview-frame').classList.remove('visible'); document.getElementById('toggle-code').classList.add('active'); document.getElementById('toggle-preview').classList.remove('active'); }
+function showPreview() { const frame=document.getElementById('preview-frame'); document.getElementById('html-output').style.display='none'; frame.classList.add('visible'); document.getElementById('toggle-preview').classList.add('active'); document.getElementById('toggle-code').classList.remove('active'); const doc=frame.contentDocument||frame.contentWindow.document; doc.open();doc.write(generatedHTML);doc.close(); setTimeout(()=>{frame.style.height=(doc.body.scrollHeight+40)+'px';},300); }
+function downloadHTML() { if(!generatedHTML) return; const slug=document.getElementById('post-title').value.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'blog-post'; const blob=new Blob([generatedHTML],{type:'text/html'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;a.download=slug+'.html';a.click(); URL.revokeObjectURL(url); }
+function flashCopied(btn,label) { const orig=btn.textContent; btn.textContent='✓ '+label; btn.classList.add('copied'); setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2000); }
+function copyHTML(btn) { navigator.clipboard.writeText(generatedHTML).then(()=>flashCopied(btn,'Copied!')); }
+function copyCard(btn) { navigator.clipboard.writeText(generatedCard).then(()=>flashCopied(btn,'Copied!')); }
+</script>
+</body>
+</html>

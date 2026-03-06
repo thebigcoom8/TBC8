@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TBC's website</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#080616">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ======= UNDER CONSTRUCTION POPUP ======= -->
+    <!-- Change 'true' to 'false' to hide the popup -->
+    <script>const SHOW_CONSTRUCTION = false;</script>
+
+    <div id="construction-overlay">
+        <div id="construction-modal">
+            <div class="modal-bg-grid"></div>
+            <div class="construction-stars">✦ ✧ ✦</div>
+            <h2 class="construction-title">under construction</h2>
+            <p class="construction-text">
+                this corner of the universe is still taking shape.<br>
+                come back soon — something beautiful is forming.
+            </p>
+            <div class="construction-stars">✧ ✦ ✧</div>
+            <button id="construction-close">enter anyway</button>
+        </div>
+    </div>
+
+    <style>
+        #construction-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 6, 22, 0.88);
+            backdrop-filter: blur(14px) saturate(1.4);
+            -webkit-backdrop-filter: blur(14px) saturate(1.4);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeSlideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        #construction-modal {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg,
+                rgba(14, 9, 35, 0.97) 0%,
+                rgba(20, 10, 44, 0.99) 100%);
+            border: 1px solid rgba(167, 139, 250, 0.28);
+            border-radius: 24px;
+            padding: 44px 40px 38px;
+            max-width: 460px;
+            width: 92%;
+            text-align: center;
+            box-shadow:
+                0 0 70px rgba(139, 92, 246, 0.2),
+                0 0 120px rgba(240, 171, 252, 0.07),
+                0 0 0 1px rgba(255,255,255,0.04) inset;
+        }
+
+        /* rainbow top bar matching nav */
+        #construction-modal::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg,
+                #818cf8, #a78bfa, #e879f9, #f472b6,
+                #fb923c, #fbbf24, #34d399, #38bdf8, #818cf8);
+            background-size: 300% 100%;
+            animation: rainbowShift 5s linear infinite;
+        }
+
+        /* inner corner glow */
+        #construction-modal::after {
+            content: '';
+            position: absolute;
+            top: -80px; right: -80px;
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(167,139,250,0.07), transparent 70%);
+            pointer-events: none;
+        }
+
+        .modal-bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(167,139,250,0.045) 1px, transparent 1px);
+            background-size: 22px 22px;
+            pointer-events: none;
+        }
+
+        @keyframes rainbowShift {
+            to { background-position: 300% 0%; }
+        }
+
+        .construction-stars {
+            position: relative;
+            z-index: 1;
+            font-size: 13px;
+            color: #a78bfa;
+            opacity: 0.45;
+            letter-spacing: 8px;
+            margin: 8px 0;
+        }
+
+        /* Hard overrides so site h2 card styles don't bleed in */
+        .construction-title {
+            position: relative;
+            z-index: 1;
+            font-family: 'Syne', sans-serif !important;
+            font-size: 22px !important;
+            font-weight: 800 !important;
+            letter-spacing: 5px !important;
+            text-transform: lowercase !important;
+            background: linear-gradient(135deg, #c4b5fd 0%, #f0abfc 45%, #fde68a 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            border: none !important;
+            border-left: none !important;
+            border-bottom: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            margin: 14px 0 20px !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            text-shadow: none !important;
+            color: transparent !important;
+        }
+
+        .construction-text {
+            position: relative;
+            z-index: 1;
+            font-family: 'Instrument Serif', Georgia, serif !important;
+            font-size: 16px !important;
+            font-weight: 400 !important;
+            font-style: italic !important;
+            line-height: 1.85 !important;
+            color: rgba(228, 220, 255, 0.78) !important;
+            margin-bottom: 0 !important;
+        }
+
+        #construction-close {
+            position: relative;
+            z-index: 1;
+            display: inline-block;
+            margin-top: 28px;
+            padding: 10px 30px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 99px;
+            color: #c4b5fd;
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            font-weight: 300;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #construction-close:hover {
+            background: rgba(167, 139, 250, 0.1);
+            border-color: rgba(196, 181, 253, 0.5);
+            color: #f0ebff;
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.2);
+            transform: scale(1.04);
+        }
+    </style>
+
+    <script>
+        (function() {
+            if (!SHOW_CONSTRUCTION) {
+                document.getElementById('construction-overlay').style.display = 'none';
+            }
+            document.getElementById('construction-close').addEventListener('click', function() {
+                const overlay = document.getElementById('construction-overlay');
+                overlay.style.opacity = '0';
+                overlay.style.transition = 'opacity 0.4s ease';
+                setTimeout(() => overlay.style.display = 'none', 400);
+            });
+        })();
+    </script>
+
+    <!-- ======= PAGE ======= -->
+    <script>
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.iframeHeight) {
+                document.getElementById('header-frame').style.height = e.data.iframeHeight + 'px';
+            }
+        });
+    </script>
+
+    <div class="floating-cards"></div>
+    <iframe id="header-frame" src="header.html" scrolling="no"></iframe>
+
+    <div class="container">
+        <div class="col-left">
+            <div class="profile-section">
+                <h2 class="section-heading">Details</h2>
+                <table class="details-table">
+                    <tr>
+                        <td>Status:</td>
+                        <td>mad at my pc and yelling at code</td>
+                    </tr>
+                    <tr>
+                        <td>Interests:</td>
+                        <td>gaming and coding</td>
+                    </tr>
+                    <tr>
+                        <td>Music:</td>
+                        <td>pop nightcore and rock</td>
+                    </tr>
+                    <tr>
+                        <td>Movies:</td>
+                        <td>a silent voice/a shape of voice(same moive but it has two names)</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-right">
+            <main>
+                <h1>TBC</h1>
+                <h4>About Me</h4>
+                <p>I'm a silly lil guy who codes and games i got a blog but who i am off line well thats something you wont know ever unless your trying i dont make it that hard
+                  
+          </p>
+                <img src="neocities.png">
+          <div id='magical-ring'>
+            <script type="text/javascript" src="https://magical-ring.neocities.org/js/onionring-variables.js"></script>
+            <script type="text/javascript" src="https://magical-ring.neocities.org/js/onionring-widget.js"></script>
+          </div> 
+
+                <h4>Who I'd Like to Meet</h4>
+                <p>every one message me!</p>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
+    </script>
+</body>
+</html>

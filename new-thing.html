@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>new thing - Gambit's website</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@0,400;0,700;0,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script>
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.iframeHeight) {
+                document.getElementById('header-frame').style.height = e.data.iframeHeight + 'px';
+            }
+        });
+    </script>
+    <div class="floating-cards"></div>
+    <iframe id="header-frame" src="header.html" scrolling="no"></iframe>
+    <div class="container-single">
+
+        <main>
+            <h2>new thing</h2>
+
+            <p style="color:rgba(168,85,247,0.7);font-size:13px;margin-bottom:6px;">
+                <time datetime="2026-03-06">March 6, 2026</time>
+            </p>
+            <h4>News</h4>
+            <p>I made post forge an Android app</p>
+            <ul class="links-list" style="flex-direction:row;flex-wrap:wrap;">
+            <li style="flex:unset"><a href="#">update</a></li>
+        </ul>
+
+            <p><a href="blogpostpage.html">&#8592; Back to Blog</a></p>
+
+            <hr style="border:none;border-top:1px solid rgba(168,85,247,0.3);margin:20px 0;">
+
+            <p>I made post forge an app as of now it only works on android but I have plans to add iOS support</p>
+<p>this isnt&#39;t posted anywhere yet as it&#39;s still in its early testing, but once it is done I&#39;ill add it to my GitHub and to F-droid and work on the iOS app but also I have no promise of LTS so it will be open source you can play with it or if you want do LTS have fun</p>
+<p>it will be made very soon</p>
+
+        </main>
+
+    </div>
+</body>
+</html>
