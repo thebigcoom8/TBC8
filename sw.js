@@ -1,11 +1,11 @@
 const CACHE = 'gambits-site-v1';
 const ASSETS = [
-  '/index.html',
-  '/blogpostpage.html',
-  '/postforge.html',
-  '/header.html',
-  '/style.css',
-  '/neocities.png',
+  'index.html',
+  'blogpostpage.html',
+  'postforge.html',
+  'header.html',
+  'style.css',
+  'neocities.png',
   'https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js'
 ];
 
