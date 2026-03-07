@@ -390,13 +390,62 @@
             <div class="spell-modal-body" id="spell-body"></div>
             <div class="spell-footer">
                 <span id="spell-count"></span>
-                <span>offline dictionary · 2787 words</span>
+                <span id="spell-dict-info">offline dictionary · 2787 words</span>
             </div>
         </div>
     </div>
 
 </div>
 <script>
+// ═══════════════════════════════════════════════════════════════
+// JSONBIN — shared persistent custom dictionary
+// Replace JSONBIN_ID and JSONBIN_KEY with your own values
+// ═══════════════════════════════════════════════════════════════
+const JSONBIN_ID  = 'YOUR69abb1dc43b1c97be9bc91dc';
+const JSONBIN_KEY = '$2a$10$GiEaWVejwZOuFBGV381cFOEaywdVaEKifLXz/ibyIpIh6NmKy6Ucy';
+const USER_DICT   = new Set();
+
+async function loadRemoteDict() {
+    try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+            headers: { 'X-Master-Key': JSONBIN_KEY }
+        });
+        const data = await res.json();
+        if (Array.isArray(data.record)) {
+            data.record.forEach(w => USER_DICT.add(w));
+            updateDictInfo();
+        }
+    } catch(e) {
+        console.warn('Could not load remote dictionary — falling back to session only.', e);
+    }
+}
+
+async function saveRemoteDict() {
+    try {
+        await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': JSONBIN_KEY
+            },
+            body: JSON.stringify([...USER_DICT])
+        });
+        updateDictInfo();
+    } catch(e) {
+        console.warn('Could not save remote dictionary.', e);
+    }
+}
+
+function updateDictInfo() {
+    const el = document.getElementById('spell-dict-info');
+    if (el) {
+        const custom = USER_DICT.size;
+        el.textContent = 'offline dictionary · 2787 words' + (custom ? ' + ' + custom + ' custom' : '');
+    }
+}
+
+loadRemoteDict();
+
 // ═══════════════════════════════════════════════════════════════
 // OFFLINE DICTIONARY
 // ═══════════════════════════════════════════════════════════════
@@ -587,22 +636,19 @@ won wonderful wont word words wore work worked workflow workflows working works 
 would wouldnt write writed writes writing written wrote yaml yearly yellow yesterday yet you youd
 youll young younger youngest youngly your youre yourself yourselves youve zero zone`;
 const DICT = new Set(DICT_RAW.split(/\s+/).filter(Boolean));
-const USER_DICT = new Set(); // words added this session
 
 function inDict(w) { return DICT.has(w) || USER_DICT.has(w); }
 
 // ── Markdown-aware tokeniser (preserves offsets) ──────────────
 function tokenise(text) {
-    // Replace regions we should skip with spaces of equal length
-    // so offsets into the original string remain valid.
     let s = text
-        .replace(/```[\s\S]*?```/g,   m => ' '.repeat(m.length))  // fenced code
-        .replace(/`[^`\n]+`/g,        m => ' '.repeat(m.length))  // inline code
-        .replace(/https?:\/\/\S+/g,   m => ' '.repeat(m.length))  // URLs
-        .replace(/\[([^\]]*)\]\([^)]*\)/g, (m, t) => t.padEnd(m.length, ' ')) // links
-        .replace(/^#{1,6} /gm,        m => ' '.repeat(m.length))  // headings
-        .replace(/^[-*+] /gm,         '  ')                        // ul markers
-        .replace(/^\d+\. /gm,         m => ' '.repeat(m.length)); // ol markers
+        .replace(/```[\s\S]*?```/g,   m => ' '.repeat(m.length))
+        .replace(/`[^`\n]+`/g,        m => ' '.repeat(m.length))
+        .replace(/https?:\/\/\S+/g,   m => ' '.repeat(m.length))
+        .replace(/\[([^\]]*)\]\([^)]*\)/g, (m, t) => t.padEnd(m.length, ' '))
+        .replace(/^#{1,6} /gm,        m => ' '.repeat(m.length))
+        .replace(/^[-*+] /gm,         '  ')
+        .replace(/^\d+\. /gm,         m => ' '.repeat(m.length));
 
     const tokens = [];
     const re = /\b([a-zA-Z]{2,})\b/g;
@@ -615,9 +661,9 @@ function tokenise(text) {
 
 function shouldSkip(word) {
     if (word.length < 2) return true;
-    if (word === word.toUpperCase()) return true;       // acronym
-    if (/^[A-Z]/.test(word)) return true;              // proper noun / start of sentence
-    if (/\d/.test(word)) return true;                  // contains digit
+    if (word === word.toUpperCase()) return true;
+    if (/^[A-Z]/.test(word)) return true;
+    if (/\d/.test(word)) return true;
     return false;
 }
 
@@ -626,10 +672,10 @@ const ALPHA = 'abcdefghijklmnopqrstuvwxyz';
 function edits1(word) {
     const res = new Set();
     const n = word.length;
-    for (let i = 0; i < n; i++)      res.add(word.slice(0,i) + word.slice(i+1));           // delete
-    for (let i = 0; i < n-1; i++)    res.add(word.slice(0,i)+word[i+1]+word[i]+word.slice(i+2)); // transpose
-    for (let i = 0; i < n; i++)      for (const c of ALPHA) res.add(word.slice(0,i)+c+word.slice(i+1)); // replace
-    for (let i = 0; i <= n; i++)     for (const c of ALPHA) res.add(word.slice(0,i)+c+word.slice(i));   // insert
+    for (let i = 0; i < n; i++)      res.add(word.slice(0,i) + word.slice(i+1));
+    for (let i = 0; i < n-1; i++)    res.add(word.slice(0,i)+word[i+1]+word[i]+word.slice(i+2));
+    for (let i = 0; i < n; i++)      for (const c of ALPHA) res.add(word.slice(0,i)+c+word.slice(i+1));
+    for (let i = 0; i <= n; i++)     for (const c of ALPHA) res.add(word.slice(0,i)+c+word.slice(i));
     return res;
 }
 
@@ -655,7 +701,6 @@ function runSpellCheck() {
     document.getElementById('spell-overlay').style.display = 'flex';
     document.getElementById('spell-body').innerHTML = '<div class="spell-loading">⟳ Checking...</div>';
     document.getElementById('spell-count').textContent = '';
-    // Defer so modal renders before potentially slow loop
     setTimeout(() => {
         const tokens = tokenise(contentEl.value);
         spellIssues = [];
@@ -716,6 +761,7 @@ function addToDict(idx) {
     const issue = spellIssues[idx];
     if (!issue) return;
     USER_DICT.add(issue.word.toLowerCase());
+    saveRemoteDict(); // ← persist to JSONBin
     ignoreIssue(idx);
 }
 
@@ -839,7 +885,7 @@ function compilePost() {
     const summaryHTML=summary?'<p>'+escapeHTML(summary)+'</p>':'';
     const categoryHTML=category?'<h4>'+escapeHTML(category)+'</h4>':'';
     const sc='</'+'script>'; const so='<'+'script>';
-    generatedHTML='<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>'+escapeHTML(title)+' - Gambit\'s website</title>\n    <link href="https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@0,400;0,700;0,900&display=swap" rel="stylesheet">\n    <link rel="icon" href="favicon.ico">\n    <link rel="stylesheet" href="style.css">\n</head>\n<body>\n    '+so+'\n        window.addEventListener(\'message\', function(e) {\n            if (e.data && e.data.iframeHeight) {\n                document.getElementById(\'header-frame\').style.height = e.data.iframeHeight + \'px\';\n            }\n        });\n    '+sc+'\n    <div class="floating-cards"></div>\n    <iframe id="header-frame" src="header.html" scrolling="no"></iframe>\n    <div class="container-single">\n\n        <main>\n            <h2>'+escapeHTML(title)+'</h2>\n\n            <p style="color:rgba(168,85,247,0.7);font-size:13px;margin-bottom:6px;">\n                <time datetime="'+date+'">'+dateFormatted+'</time>\n            </p>\n            '+categoryHTML+'\n            '+summaryHTML+'\n            '+tagListHTML+'\n\n            <p><a href="blogpostpage.html">&#8592; Back to Blog</a></p>\n\n            <hr style="border:none;border-top:1px solid rgba(168,85,247,0.3);margin:20px 0;">\n\n            '+bodyHTML+'\n        </main>\n\n    </div>\n</body>\n</html>';
+    generatedHTML='<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>'+escapeHTML(title)+' - Gambit\'s website</title>\n    <link href="https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@0,400;0,700;0,900&display=swap" rel="stylesheet">\n    <link rel="stylesheet" href="style.css">\n</head>\n<body>\n    '+so+'\n        window.addEventListener(\'message\', function(e) {\n            if (e.data && e.data.iframeHeight) {\n                document.getElementById(\'header-frame\').style.height = e.data.iframeHeight + \'px\';\n            }\n        });\n    '+sc+'\n    <div class="floating-cards"></div>\n    <iframe id="header-frame" src="header.html" scrolling="no"></iframe>\n    <div class="container-single">\n\n        <main>\n            <h2>'+escapeHTML(title)+'</h2>\n\n            <p style="color:rgba(168,85,247,0.7);font-size:13px;margin-bottom:6px;">\n                <time datetime="'+date+'">'+dateFormatted+'</time>\n            </p>\n            '+categoryHTML+'\n            '+summaryHTML+'\n            '+tagListHTML+'\n\n            <p><a href="blogpostpage.html">&#8592; Back to Blog</a></p>\n\n            <hr style="border:none;border-top:1px solid rgba(168,85,247,0.3);margin:20px 0;">\n\n            '+bodyHTML+'\n        </main>\n\n    </div>\n</body>\n</html>';
     const slug=title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'blog-post';
     const tagChips=tags.map(t=>'                        <span class="post-card-tag">'+escapeHTML(t)+'</span>').join('\n');
     generatedCard='<div class="post-card" data-category="'+escapeHTML(category||'Other')+'">\n    <a href="'+slug+'.html">\n        <div class="post-card-top">\n            <span class="post-card-title">'+escapeHTML(title)+'</span>\n            <div class="post-card-meta">\n                <span class="post-card-date">'+dateFormatted+'</span>\n'+(category?'                <span class="post-card-category">'+escapeHTML(category)+'</span>\n':'')+'            </div>\n        </div>\n'+(summary?'        <p class="post-card-summary">'+escapeHTML(summary)+'</p>\n':'')+(tags.length?'        <div class="post-card-tags">\n'+tagChips+'\n        </div>\n':'')+'        <span class="post-card-arrow">&#x2192;</span>\n    </a>\n</div>';
