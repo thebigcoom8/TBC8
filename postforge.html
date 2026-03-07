@@ -406,6 +406,10 @@ const JSONBIN_KEY = '$2a$10$GiEaWVejwZOuFBGV381cFOEaywdVaEKifLXz/ibyIpIh6NmKy6Uc
 const USER_DICT   = new Set();
 
 async function loadRemoteDict() {
+    async function loadRemoteDict() {
+    try {
+        console.log('loading remote dict...');
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
     try {
         const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
             headers: { 'X-Master-Key': JSONBIN_KEY }
