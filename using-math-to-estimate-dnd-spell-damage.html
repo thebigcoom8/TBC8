@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Using Math to Estimate DnD Spell Damage - Gambit's website</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@0,400;0,700;0,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script>
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.iframeHeight) {
+                document.getElementById('header-frame').style.height = e.data.iframeHeight + 'px';
+            }
+        });
+    </script>
+    <div class="floating-cards"></div>
+    <iframe id="header-frame" src="header.html" scrolling="no"></iframe>
+    <div class="container-single">
+
+        <main>
+            <h2>Using Math to Estimate DnD Spell Damage</h2>
+
+            <p style="color:rgba(168,85,247,0.7);font-size:13px;margin-bottom:6px;">
+                <time datetime="2026-03-09">March 9, 2026</time>
+            </p>
+            <h4>News</h4>
+            <p>I watched a YouTube video the other day about **Dungeons &amp; Dragons spell damage** and how you can use math to estimate how much damage a spell will deal on average</p>
+            <ul class="links-list" style="flex-direction:row;flex-wrap:wrap;">
+            <li style="flex:unset"><a href="#">DnD</a></li>
+        </ul>
+
+            <p><a href="blogpostpage.html">&#8592; Back to Blog</a></p>
+
+            <hr style="border:none;border-top:1px solid rgba(168,85,247,0.3);margin:20px 0;">
+
+            <p>I watched a YouTube video the other day about <strong>Dungeons &amp; Dragons spell damage</strong> and how you can use math to estimate how much damage a spell will deal on average.</p>
+<p>Normally, when you roll dice like <code>3d6</code> or <code>8d8</code>, the result is random every time. But instead of rolling the dice thousands of times to figure out the average, you can calculate it with a simple formula.</p>
+<hr>
+<h3>The Formula</h3>
+<p>For dice written in standard DnD notation (<code>nds</code>), the <strong>average damage</strong> can be calculated using this formula:</p>
+<blockquote>
+<p><strong>Average Damage = n(s + 1) / 2</strong></p>
+</blockquote>
+<p>Where:</p>
+<ul>
+<li><strong>n</strong> = number of dice  </li>
+<li><strong>s</strong> = number of sides on each die  </li>
+<li><strong>d</strong> = dice notation separator</li>
+</ul>
+<hr>
+<h3>Example</h3>
+<p>Let&#39;s calculate the average damage for <code>3d6</code>.</p>
+<p>Step 1: Add 1 to the number of sides.</p>
+<p>6 + 1 = 7</p>
+<p>Step 2: Multiply by the number of dice.</p>
+<p>3 × 7 = 21</p>
+<p>Step 3: Divide by 2.</p>
+<p>21 / 2 = <strong>10.5</strong></p>
+<p>So the <strong>average damage of <code>3d6</code> is 10.5</strong>.</p>
+<hr>
+<h3>Why This Is Useful</h3>
+<p>This formula makes it much easier to compare spells or abilities. Instead of relying on random dice rolls, you can quickly estimate how strong something is on average.</p>
+<p>This can be useful for:</p>
+<ul>
+<li>comparing spells</li>
+<li>balancing abilities</li>
+<li>designing homebrew content</li>
+</ul>
+<hr>
+<h3>My Project</h3>
+<p>After learning about this, I decided to build a small project that calculates spell damage automatically.</p>
+<p>It also includes a <strong>built-in character sheet</strong>, which makes it easier to experiment with different spells and builds.</p>
+<p>If I upload the project to GitHub later, I&#39;ll probably write more about how it works.</p>
+
+        </main>
+
+    </div>
+</body>
+</html>
