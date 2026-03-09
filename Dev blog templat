@@ -1,0 +1,93 @@
+A short introduction explaining:
+
+- what you were working on
+- what problem you were thinking about
+- what made you interested in solving it
+
+Try to keep this to **2–3 short paragraphs**.
+
+---
+
+#### The Problem
+
+Explain the problem you were trying to solve.
+
+Questions that help here:
+- What were you trying to figure out?
+- What was confusing or difficult?
+- Why did it matter?
+
+---
+
+#### The Idea
+
+Explain the main concept, formula, or approach you discovered.
+
+If there is math or code, show it clearly.
+
+Example:
+
+Important Formula:
+
+Average Damage = n(s + 1) / 2
+
+Explain what the variables mean.
+
+- n = number of dice  
+- s = number of sides  
+
+---
+
+#### Example
+
+Walk through a real example step by step.
+
+Example: `3d6`
+
+Step 1  
+3(6 + 1)
+
+Step 2  
+21 / 2
+
+Step 3  
+10.5
+
+Explain the result in plain language.
+
+---
+
+#### Why This Is Useful
+
+Explain how this idea helps in practice.
+
+For example:
+
+- balancing mechanics
+- optimizing code
+- designing systems
+- understanding how something works
+
+---
+
+#### What I Built
+
+Explain the project you made using this idea.
+
+Example things to include:
+
+- what the project does
+- interesting features
+- what you learned while building it
+
+---
+
+#### Future Improvements
+
+(Optional but good for dev blogs)
+
+Things you might add later:
+
+- new features
+- optimizations
+- improvements to the idea
