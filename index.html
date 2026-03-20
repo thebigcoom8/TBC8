@@ -12,22 +12,29 @@
 </head>
 <body>
 
-    <!-- ======= UNDER CONSTRUCTION POPUP ======= -->
+    <!-- ======= MIGRATION POPUP ======= -->
     <!-- Change 'true' to 'false' to hide the popup -->
-    <script>const SHOW_CONSTRUCTION = false;</script>
+    <script>const SHOW_CONSTRUCTION = true;</script>
 
     <div id="construction-overlay">
         <div id="construction-modal">
             <div class="modal-bg-grid"></div>
             <div class="construction-stars">✦ ✧ ✦</div>
-            <h2 class="construction-title">under construction</h2>
+            <h2 class="construction-title">we moved!</h2>
             <p class="construction-text">
-                this corner of the universe is still taking shape.<br>
-                come back soon — something beautiful is forming.
+                sorry for jumping around urls — we're back on neocities for good.<br>
+                this github pages site is now a testing ground only.
             </p>
             <div class="construction-stars">✧ ✦ ✧</div>
-            <button id="construction-close">enter anyway</button>
+            <a href="https://thebigcoom8.neocities.org" id="neo-btn">take me there →</a>
+            <br>
+            <button id="construction-close">stay here anyway</button>
         </div>
+        <p id="migration-note">
+            why did we move around? originally this site moved to github pages to get pwa + install support working —
+            neocities was blocking service workers at the time. turns out neocities fixed that, so we're back.
+            github pages is now just a testing ground.
+        </p>
     </div>
 
     <style>
@@ -39,6 +46,7 @@
             -webkit-backdrop-filter: blur(14px) saturate(1.4);
             z-index: 9999;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             animation: fadeSlideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1);
@@ -108,7 +116,6 @@
             margin: 8px 0;
         }
 
-        /* Hard overrides so site h2 card styles don't bleed in */
         .construction-title {
             position: relative;
             z-index: 1;
@@ -145,31 +152,67 @@
             margin-bottom: 0 !important;
         }
 
-        #construction-close {
+        #neo-btn {
             position: relative;
             z-index: 1;
             display: inline-block;
             margin-top: 28px;
-            padding: 10px 30px;
-            background: rgba(255,255,255,0.025);
-            border: 1px solid rgba(167, 139, 250, 0.3);
+            padding: 14px 40px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            border: 1px solid rgba(196, 181, 253, 0.5);
             border-radius: 99px;
-            color: #c4b5fd;
+            color: #fff;
             font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            font-weight: 300;
-            letter-spacing: 2.5px;
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 2px;
             text-transform: uppercase;
+            text-decoration: none;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+        }
+
+        #neo-btn:hover {
+            background: linear-gradient(135deg, #6d28d9, #9333ea);
+            box-shadow: 0 0 50px rgba(139, 92, 246, 0.6);
+            transform: scale(1.05);
+            color: #fff;
+        }
+
+        #construction-close {
+            position: relative;
+            z-index: 1;
+            display: inline-block;
+            margin-top: 14px;
+            padding: 6px 18px;
+            background: transparent;
+            border: none;
+            border-radius: 99px;
+            color: rgba(196, 181, 253, 0.35);
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
         #construction-close:hover {
-            background: rgba(167, 139, 250, 0.1);
-            border-color: rgba(196, 181, 253, 0.5);
-            color: #f0ebff;
-            box-shadow: 0 0 20px rgba(167, 139, 250, 0.2);
-            transform: scale(1.04);
+            color: rgba(196, 181, 253, 0.65);
+        }
+        #migration-note {
+            margin-top: 16px;
+            max-width: 460px;
+            width: 92%;
+            text-align: center;
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            font-weight: 300;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.85);
+            letter-spacing: 0.5px;
         }
     </style>
 
@@ -227,15 +270,12 @@
             <main>
                 <h1>TBC</h1>
                 <h4>About Me</h4>
-                <p>I'm a silly lil guy who codes and games. I got a blog, but who I am offline, well, that's something you won't know ever unless you're trying. I don't make it that hard
-                  
-          </p>
+                <p>I'm a silly lil guy who codes and games. I got a blog, but who I am offline, well, that's something you won't know ever unless you're trying. I don't make it that hard</p>
                 <img src="neocities.png">
-          <div id='magical-ring'>
-            <script type="text/javascript" src="https://magical-ring.neocities.org/js/onionring-variables.js"></script>
-            <script type="text/javascript" src="https://magical-ring.neocities.org/js/onionring-widget.js"></script>
-          </div> 
-
+                <div id='magical-ring'>
+                    <script type="text/javascript" src="https://magical-ring.neocities.org/js/onionring-variables.js"></script>
+                    <script type="text/javascript" src="https://magical-ring.neocities.org/js/onionring-widget.js"></script>
+                </div>
                 <h4>Who I'd Like to Meet</h4>
                 <p>every one message me!</p>
             </main>
