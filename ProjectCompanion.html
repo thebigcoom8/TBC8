@@ -3,82 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Companion Project</title>
+    <title>The Companion Project | Vision</title>
     <style>
+        /* FONTS */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+
+        /* RESET & BASE */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #0a0914;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(80, 50, 150, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(160, 80, 120, 0.1) 0%, transparent 40%);
+            background-attachment: fixed;
+            font-family: 'Cormorant Garamond', serif;
+            color: #d1cae1;
             line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 40px auto;
+            overflow-x: hidden;
+        }
+
+        /* LAYOUT */
+        .wrapper {
+            max-width: 1100px;
+            margin: 60px auto;
             padding: 0 20px;
-            background-color: #f9f9f9;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            animation: fadeIn 1.2s ease-out;
         }
-        .container {
-            background: white;
+
+        /* GLASS CARD STYLE */
+        section {
+            background: rgba(20, 18, 35, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(180, 140, 255, 0.12);
+            border-radius: 4px; /* Sharper edges feel more professional */
             padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
         }
-        h1 { color: #1a1a1a; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        h2 { color: #2c3e50; margin-top: 30px; }
-        h3 { color: #444; margin-top: 25px; text-transform: uppercase; font-size: 1.1em; letter-spacing: 1px; }
-        p { margin-bottom: 1.2em; }
-        ul { margin-bottom: 1.2em; }
-        li { margin-bottom: 8px; }
-        strong { color: #000; }
-        hr { border: 0; border-top: 1px solid #eee; margin: 40px 0; }
-        .meta-text { font-style: italic; color: #666; }
+
+        /* Subtle Accent Line */
+        section::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, #c9b8ff, #f0a8c8, transparent);
+        }
+
+        /* TYPOGRAPHY */
+        .pre-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: #f0a8c8;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #c9b8ff;
+            font-size: 1.2rem;
+            margin: 40px 0 20px 0;
+            letter-spacing: 2px;
+            border-left: 3px solid #f0a8c8;
+            padding-left: 15px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        strong {
+            color: #fff;
+            font-weight: 600;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        /* LISTS */
+        ul {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        li {
+            padding: 20px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+
+        li:hover {
+            background: rgba(255, 255, 255, 0.07);
+            transform: translateX(5px);
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(180, 140, 255, 0.3), transparent);
+            margin: 50px 0;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #c9b8ff; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        
-        <p class="meta-text">the non technical</p>
-        <h1>Introduction: The Companion Project</h1>
-        
-        <p>This series is an oversimplification of a complex idea, designed so that anyone can understand the core mission. If you are technically minded and want the deep-dive equations and architectural schematics, the <strong>Technical Proposal</strong> follows this series. These five essays are for everyone else.</p>
 
-        <h3>The Five Pillars of the Project</h3>
-        <ul>
-            <li><strong>Part 1: The Vision (The Manifesto)</strong> – The shift from seeing AI as a "Tool" to seeing it as a "Companion." This was sparked by the 14,000-node "dreaming" architecture of Kent Overstreet’s PoC. I realized then that next-token prediction is a ceiling; to understand the world, AI must live in it.</li>
-            <li><strong>Part 2: The Logic (The Grounding Problem)</strong> – Why the "Library" approach is a dead end. Current AI is a sophisticated parrot that knows the word "hot" but has never felt a mug of tea. Meaning lives in experience, not text.</li>
-            <li><strong>Part 3: The Architecture</strong> – An engineering blueprint modeled on the human brain. We are moving away from passive cameras to active systems that split data into "What" and "Where" streams, predicting the world instead of just reacting to it.</li>
-            <li><strong>Part 4: The Moral Weight (The Philosophical Inquiry)</strong> – The consequences of success. When we give a system autonomy, our role shifts from "Architect" to "Parent." We aren't creating a threat; we are creating a peer.</li>
-            <li><strong>Part 5: The Grounding (The Reality Check)</strong> – The obstacles and the call to action. Success is expensive, hard to verify, and far from guaranteed. I am looking for the pioneers—Architects, Curators, and Hardware Enthusiasts—to help build the "body" this mind requires.</li>
-        </ul>
+    <div class="wrapper">
+        <section>
+            <span class="pre-title">Strategic Dossier</span>
+            <h1>The Companion Project</h1>
+            
+            <p>This series is an oversimplification of a complex idea, designed so that anyone can understand the core mission. If you are technically minded, the <strong>Technical Proposal</strong> follows this series.</p>
 
-        <hr>
+            <h3>The Five Pillars</h3>
+            <ul>
+                <li><strong>Part 1: The Vision</strong> – The shift from seeing AI as a "Tool" to a "Companion." This was sparked by the 14,000-node "dreaming" architecture of Kent Overstreet’s PoC.</li>
+                <li><strong>Part 2: The Logic</strong> – Why the "Library" approach is a dead end. Meaning lives in experience, not text.</li>
+                <li><strong>Part 3: The Architecture</strong> – An engineering blueprint modeled on the human brain (Dorsal streams, Active Inference).</li>
+                <li><strong>Part 4: The Moral Weight</strong> – Our role shifts from "Architect" to "Parent."</li>
+                <li><strong>Part 5: The Grounding</strong> – The obstacles and the call to action for pioneers.</li>
+            </ul>
 
-        <h3>On Authorship: What I Built, What AI Helped With</h3>
-        <p>I believe in being direct about how these documents came together. As we figure out the norms for AI-collaborative writing, I want to be clear about where the human ends and the machine begins.</p>
+            <hr>
 
-        <p><strong>What is Mine:</strong></p>
-        <ul>
-            <li><strong>The Vision:</strong> Every conceptual claim, the three-phase plan, and the core argument—that experience beats text as training data—came from me.</li>
-            <li><strong>The Voice:</strong> The original manifesto, the "parrot in the library" analogy, and the "one guy standing on the shoulders of giants" framing are my original writing.</li>
-            <li><strong>The Editorial Veto:</strong> I caught every time the AI drifted into "corporate-speak" or used "we" when I meant "I." The final judgment on every word is mine.</li>
-        </ul>
+            <h3>Authorship & Collaboration</h3>
+            <p><strong>What is Mine:</strong> Every conceptual claim, the original manifesto, the "parrot in the library" analogy, and the final editorial veto on every word.</p>
+            
+            <p><strong>Where AI Helped:</strong> Technical articulation of biological mechanisms, structural flow, and layperson translation for broader accessibility.</p>
 
-        <p><strong>Where the AIs Helped:</strong></p>
-        <ul>
-            <li><strong>Technical Precision:</strong> While I provided the concepts (Active Inference, Dorsal streams, JEPA), Claude helped articulate the specific biological mechanisms to ensure they met a high academic standard.</li>
-            <li><strong>Structural Flow:</strong> Gemini acted as a lead editor, helping me "de-duplicate" my drafts and prune redundancies so these five standalone pieces would flow as a single, cohesive narrative.</li>
-            <li><strong>Layperson Translation:</strong> The "Dummies' Guide" versions were collaborative; I provided the logic, and the AI suggested ways to strip away the jargon while keeping the meaning intact.</li>
-        </ul>
+            <p style="font-style: italic; color: #f0a8c8;">"I am comfortable with this balance; it represents the exact kind of partnership this project aims to achieve."</p>
+            
+            <hr>
 
-        <p><strong>The Bottom Line:</strong> If you ask who designed Project Companion: <strong>I did.</strong> If you ask if AI helped organize and refine these documents: <strong>Yes, meaningfully.</strong> I am comfortable with that balance, and I believe it represents the exact kind of "partnership" this project aims to achieve.</p>
-
-        <hr>
-
-        <p class="meta-text">the Vision</p>
-        <h2>Part 1: The Vision (The Manifesto)</h2>
-        <p><strong>The Focus:</strong> The emotional and conceptual shift from "Tool" to "Companion."</p>
-        
-        <p>I was reading about LLMs and embodied AI when I found something that stopped me. ProofOfConcept (PoC) is an AI built by Kent Overstreet to work on the Linux filesystem. PoC possesses a memory system—a graph with fourteen thousand nodes it wanders during "dreams" to find connections it couldn't find while working.</p>
-        
-        <p>Something about that architecture clicked. It led me to a harder realization: current models have a structural ceiling. Whether it’s ChatGPT or Gemini, they are built on next-token prediction—snapshots, not streams. To truly understand the real world, the architecture itself must change.</p>
-
+            <span class="pre-title">Part 01</span>
+            <h2>The Vision (The Manifesto)</h2>
+            <p>The emotional and conceptual shift from "Tool" to "Companion."</p>
+            
+            <p>I was reading about LLMs and embodied AI when I found something that stopped me. <strong>ProofOfConcept (PoC)</strong> possesses a memory system—a graph with fourteen thousand nodes it wanders during "dreams" to find connections it couldn't find while working.</p>
+            
+            <p>Something about that architecture clicked. Current models have a structural ceiling; they are built on next-token prediction—snapshots, not streams. To truly understand the real world, the architecture itself must change.</p>
+        </section>
     </div>
+
 </body>
 </html>
