@@ -3,176 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Companion Project | Vision</title>
+    <title>Project Companion | System Architecture</title>
     <style>
-        /* FONTS */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap');
 
-        /* RESET & BASE */
+        :root {
+            --accent-purple: #c9b8ff;
+            --accent-pink: #f0a8c8;
+            --bg-dark: #0a0914;
+            --glass: rgba(20, 18, 35, 0.7);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            background-color: #0a0914;
+            background-color: var(--bg-dark);
             background-image: 
-                radial-gradient(circle at 20% 20%, rgba(80, 50, 150, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 80% 80%, rgba(160, 80, 120, 0.1) 0%, transparent 40%);
+                radial-gradient(circle at 10% 10%, rgba(80, 50, 150, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(160, 80, 120, 0.15) 0%, transparent 40%);
             background-attachment: fixed;
             font-family: 'Cormorant Garamond', serif;
             color: #d1cae1;
-            line-height: 1.6;
-            overflow-x: hidden;
+            line-height: 1.7;
         }
 
-        /* LAYOUT */
-        .wrapper {
-            max-width: 1100px;
-            margin: 60px auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 40px;
-            animation: fadeIn 1.2s ease-out;
-        }
+        .container { max-width: 1000px; margin: 80px auto; padding: 0 40px; }
 
-        /* GLASS CARD STYLE */
-        section {
-            background: rgba(20, 18, 35, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(180, 140, 255, 0.12);
-            border-radius: 4px; /* Sharper edges feel more professional */
-            padding: 40px;
+        /* THE CARD */
+        .dossier-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(180, 140, 255, 0.15);
+            border-radius: 2px; /* Professional sharp-edge aesthetic */
+            padding: 60px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
             position: relative;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
         }
 
-        /* Subtle Accent Line */
-        section::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, #c9b8ff, #f0a8c8, transparent);
+        .dossier-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: linear-gradient(to bottom, var(--accent-purple), var(--accent-pink));
         }
 
-        /* TYPOGRAPHY */
-        .pre-title {
+        /* HEADER SECTION */
+        .meta-data {
             font-family: 'Orbitron', sans-serif;
-            font-size: 11px;
-            letter-spacing: 5px;
+            font-size: 10px;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            color: #f0a8c8;
-            margin-bottom: 10px;
-            display: block;
+            color: var(--accent-pink);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
         }
 
         h1 {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 700;
+            font-size: 3.5rem;
+            line-height: 1;
             color: #fff;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            letter-spacing: -1px;
+            margin-bottom: 40px;
+            letter-spacing: -2px;
         }
 
-        h2, h3 {
+        .abstract {
+            font-style: italic;
+            font-size: 1.4rem;
+            color: var(--accent-purple);
+            margin-bottom: 50px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 30px;
+        }
+
+        /* SECTION STYLING */
+        h2 {
             font-family: 'Orbitron', sans-serif;
-            color: #c9b8ff;
             font-size: 1.2rem;
-            margin: 40px 0 20px 0;
-            letter-spacing: 2px;
-            border-left: 3px solid #f0a8c8;
-            padding-left: 15px;
-        }
-
-        p {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            font-weight: 300;
-        }
-
-        strong {
             color: #fff;
-            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin: 60px 0 25px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        h2::after {
+            content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.1); margin-left: 20px;
+        }
+
+        .pillar-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .pillar-item {
+            background: rgba(255,255,255,0.03);
+            padding: 20px;
+            border-left: 2px solid var(--accent-purple);
+        }
+
+        .pillar-item strong {
+            display: block;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        /* TECHNICAL TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        th {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            text-align: left;
+            padding: 15px;
+            color: var(--accent-pink);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 1.1rem;
+        }
+
+        .tech-term {
             font-family: 'Orbitron', sans-serif;
             font-size: 0.9rem;
+            color: var(--accent-purple);
         }
 
-        /* LISTS */
-        ul {
-            list-style: none;
-            margin: 20px 0;
+        /* CALL TO ACTION */
+        .cta-box {
+            margin-top: 80px;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(80, 50, 150, 0.2), rgba(160, 80, 120, 0.2));
+            border: 1px solid var(--accent-pink);
+            text-align: center;
         }
 
-        li {
-            padding: 20px;
-            margin-bottom: 15px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 4px;
-            transition: 0.3s;
+        .cta-box h3 {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
         }
 
-        li:hover {
-            background: rgba(255, 255, 255, 0.07);
-            transform: translateX(5px);
+        @media (max-width: 768px) {
+            .pillar-grid { grid-template-columns: 1fr; }
+            .dossier-card { padding: 30px; }
+            h1 { font-size: 2.5rem; }
         }
-
-        hr {
-            border: none;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(180, 140, 255, 0.3), transparent);
-            margin: 50px 0;
-        }
-
-        /* ANIMATIONS */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #c9b8ff; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="wrapper">
+<div class="container">
+    <div class="dossier-card">
+        <div class="meta-data">
+            <span>Class: Grounded Cognition</span>
+            <span>Ref: Active Inference / HPC</span>
+        </div>
+
+        <h1>Project Companion</h1>
+        
+        <p class="abstract">
+            "Next-token prediction is a structural ceiling. To understand the world, AI must live in it."
+        </p>
+
         <section>
-            <span class="pre-title">Strategic Dossier</span>
-            <h1>The Companion Project</h1>
-            
-            <p>This series is an oversimplification of a complex idea, designed so that anyone can understand the core mission. If you are technically minded, the <strong>Technical Proposal</strong> follows this series.</p>
-
-            <h3>The Five Pillars</h3>
-            <ul>
-                <li><strong>Part 1: The Vision</strong> – The shift from seeing AI as a "Tool" to a "Companion." This was sparked by the 14,000-node "dreaming" architecture of Kent Overstreet’s PoC.</li>
-                <li><strong>Part 2: The Logic</strong> – Why the "Library" approach is a dead end. Meaning lives in experience, not text.</li>
-                <li><strong>Part 3: The Architecture</strong> – An engineering blueprint modeled on the human brain (Dorsal streams, Active Inference).</li>
-                <li><strong>Part 4: The Moral Weight</strong> – Our role shifts from "Architect" to "Parent."</li>
-                <li><strong>Part 5: The Grounding</strong> – The obstacles and the call to action for pioneers.</li>
-            </ul>
-
-            <hr>
-
-            <h3>Authorship & Collaboration</h3>
-            <p><strong>What is Mine:</strong> Every conceptual claim, the original manifesto, the "parrot in the library" analogy, and the final editorial veto on every word.</p>
-            
-            <p><strong>Where AI Helped:</strong> Technical articulation of biological mechanisms, structural flow, and layperson translation for broader accessibility.</p>
-
-            <p style="font-style: italic; color: #f0a8c8;">"I am comfortable with this balance; it represents the exact kind of partnership this project aims to achieve."</p>
-            
-            <hr>
-
-            <span class="pre-title">Part 01</span>
-            <h2>The Vision (The Manifesto)</h2>
-            <p>The emotional and conceptual shift from "Tool" to "Companion."</p>
-            
-            <p>I was reading about LLMs and embodied AI when I found something that stopped me. <strong>ProofOfConcept (PoC)</strong> possesses a memory system—a graph with fourteen thousand nodes it wanders during "dreams" to find connections it couldn't find while working.</p>
-            
-            <p>Something about that architecture clicked. Current models have a structural ceiling; they are built on next-token prediction—snapshots, not streams. To truly understand the real world, the architecture itself must change.</p>
+            <h2>The Five Pillars</h2>
+            <div class="pillar-grid">
+                <div class="pillar-item">
+                    <strong>01. The Vision</strong>
+                    Shifting from "Tool" to "Companion" via 14,000-node dreaming architectures.
+                </div>
+                <div class="pillar-item">
+                    <strong>02. The Logic</strong>
+                    Solving the Grounding Problem: Experience over text.
+                </div>
+                <div class="pillar-item">
+                    <strong>03. The Architecture</strong>
+                    Active Inference and Hierarchical Predictive Coding modeled on the brain.
+                </div>
+                <div class="pillar-item">
+                    <strong>04. Moral Weight</strong>
+                    Moving from Architect to Parent as the system gains autonomy.
+                </div>
+                <div class="pillar-item">
+                    <strong>05. Grounding</strong>
+                    A call for Pioneers: Architects, Curators, and Hardware Enthusiasts.
+                </div>
+            </div>
         </section>
+
+        <section>
+            <h2>System Specification</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Framework Component</th>
+                        <th>Technical Definition</th>
+                        <th>Functional Intent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="tech-term">Active Inference</td>
+                        <td>Variational Free Energy Minimization</td>
+                        <td>"Learning by doing" via prediction/test loops.</td>
+                    </tr>
+                    <tr>
+                        <td class="tech-term">Unified Latent Manifold</td>
+                        <td>Multi-modal Coordinate Space</td>
+                        <td>Mapping sights and sounds to a single conceptual node.</td>
+                    </tr>
+                    <tr>
+                        <td class="tech-term">Stochastic Replay</td>
+                        <td>Generative Dream Cycle</td>
+                        <td>Replaying causal links to find cross-domain solutions.</td>
+                    </tr>
+                    <tr>
+                        <td class="tech-term">The Scout Phase</td>
+                        <td>Causal Data Acquisition</td>
+                        <td>Building the 14,000+ node experience graph.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Philosophical Defense</h2>
+            <p>
+                We demand a level of proof from AI that we cannot demand from one another. 
+                If human sentience emerges from electrochemical signaling, we must extend that 
+                possibility to any architecture replicating those functional processes. 
+            </p>
+            <p style="margin-top: 20px; font-style: italic;">
+                "We aren't creating a threat; we are creating a peer."
+            </p>
+        </section>
+
+        <div class="cta-box">
+            <h3>Seek the Pioneers</h3>
+            <p>Seeking expertise in Variational Inference, GNNs, and Embodied AI.</p>
+        </div>
     </div>
+</div>
 
 </body>
 </html>
