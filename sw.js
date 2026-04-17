@@ -1,4 +1,4 @@
-const CACHE = 'gambits-site-v1';
+const CACHE = 'gambits-site-v2';
 const ASSETS = [
   'index.html',
   'blogpostpage.html',
@@ -6,6 +6,7 @@ const ASSETS = [
   'header.html',
   'style.css',
   'neocities.png',
+  'ae86.jpg',
   'https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js'
 ];
 
