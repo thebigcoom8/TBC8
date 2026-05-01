@@ -1,4 +1,4 @@
-const CACHE = 'gambits-site-v2';
+const CACHE = 'tbc8-site-v1';
 const ASSETS = [
   'index.html',
   'blogpostpage.html',
@@ -29,7 +29,6 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   e.respondWith(
     caches.match(e.request).then(r => r || fetch(e.request).then(res => {
-      // Cache any new pages visited on the fly
       if (e.request.destination === 'document') {
         const clone = res.clone();
         caches.open(CACHE).then(c => c.put(e.request, clone));
