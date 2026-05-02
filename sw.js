@@ -1,4 +1,4 @@
-const CACHE = 'tbc8-site-v2';
+const CACHE = 'tbc8-site-v2.1';
 const ASSETS = [
   'index.html',
   'blogpostpage.html',
