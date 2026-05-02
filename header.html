@@ -152,7 +152,6 @@
             z-index: 0;
         }
 
-        /* Frosted pill that springs in on hover */
         .links-block a::before {
             content: '';
             position: absolute;
@@ -170,7 +169,6 @@
             z-index: -1;
         }
 
-        /* Index number floats up on hover */
         .links-block a::after {
             content: attr(data-index);
             position: absolute;
@@ -203,6 +201,81 @@
         @keyframes orbDrift {
             0%   { transform: translateX(0) translateY(0); }
             100% { transform: translateX(20px) translateY(8px); }
+        }
+
+        /* ── MUSIC PLAYER ─────────────────────────────────── */
+        .music-block {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 10px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        /* separator line on the left, same style as logo-block */
+        .music-block::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 22%; bottom: 22%;
+            width: 1px;
+            background: linear-gradient(180deg,
+                transparent,
+                var(--violet) 40%,
+                var(--gold) 60%,
+                transparent);
+            opacity: 0.35;
+        }
+
+        .music-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            color: var(--dim);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        #play-pause-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            color: var(--lavender);
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.25s, background 0.25s, color 0.25s;
+            flex-shrink: 0;
+        }
+
+        #play-pause-btn:hover {
+            background: var(--surface);
+            border-color: rgba(196,181,232,0.4);
+            color: #f0eaff;
+        }
+
+        /* pulsing dot when playing */
+        .music-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--violet);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .music-dot.active {
+            opacity: 1;
+            animation: musicPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes musicPulse {
+            0%, 100% { transform: scale(1);   opacity: 0.6; }
+            50%       { transform: scale(1.6); opacity: 1; }
         }
 
         /* ── HAMBURGER ────────────────────────────────────── */
@@ -282,10 +355,17 @@
             body { overflow: visible; }
             .links-block { display: none; }
             .hamburger { display: flex; }
+            .music-block { margin-left: auto; }
         }
     </style>
 </head>
 <body>
+
+    <!-- hidden YouTube player, shoved off screen -->
+    <div style="position:absolute; left:-9999px; top:-9999px;">
+        <div id="yt-player"></div>
+    </div>
+
     <nav>
         <div class="glow-orb orb-1"></div>
         <div class="glow-orb orb-2"></div>
@@ -330,6 +410,13 @@
                 <a href="friends.html"      target="_top" data-index="06">IRL Friends</a>
             </div>
 
+            <!-- music player sits on the right end of the nav -->
+            <div class="music-block">
+                <div class="music-dot" id="music-dot"></div>
+                <span class="music-label">lofi</span>
+                <button id="play-pause-btn" title="Play / Pause music">▶</button>
+            </div>
+
             <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
                 <span></span><span></span><span></span>
             </button>
@@ -346,11 +433,53 @@
     </div>
 
     <script>
+        // ── MENU ──────────────────────────────────────────────
         function toggleMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('open');
             window.parent.postMessage({ iframeHeight: document.body.scrollHeight }, '*');
         }
+
+        // ── MUSIC PLAYER ──────────────────────────────────────
+        let player;
+        let isPlaying = false;
+
+        const btn = document.getElementById('play-pause-btn');
+        const dot = document.getElementById('music-dot');
+
+        // YouTube API calls this automatically when it's ready
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('yt-player', {
+                height: '1',
+                width: '1',
+                videoId: 'uzX6Mu-sCfA',  // your lofi video
+                playerVars: {
+                    autoplay: 0,           // no autoplay!
+                    controls: 0,
+                }
+            });
+        }
+
+        btn.addEventListener('click', function () {
+            // player might not be ready yet if clicked super fast
+            if (!player || typeof player.playVideo !== 'function') return;
+
+            if (isPlaying) {
+                player.pauseVideo();
+                btn.textContent = '▶';
+                dot.classList.remove('active');
+                isPlaying = false;
+            } else {
+                player.playVideo();
+                btn.textContent = '⏸';
+                dot.classList.add('active');
+                isPlaying = true;
+            }
+        });
     </script>
+
+    <!-- load the YouTube iframe API, no key needed -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
 </body>
 </html>
