@@ -21,7 +21,7 @@ body {
         radial-gradient(ellipse 80% 60% at 50% -10%, rgba(120, 80, 200, 0.45) 0%, transparent 60%),
         radial-gradient(ellipse 50% 40% at 80% 80%, rgba(200, 100, 160, 0.25) 0%, transparent 55%),
         radial-gradient(ellipse 40% 30% at 10% 90%, rgba(80, 120, 220, 0.2) 0%, transparent 50%),
-        url('ae86.jpg'); /* ← replace with your actual filename */
+        url('ae86.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
